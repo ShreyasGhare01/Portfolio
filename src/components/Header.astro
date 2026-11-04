@@ -1,0 +1,132 @@
+---
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+
+const nav = [
+  { label: 'About', href: '/#about' },
+  { label: 'Experience', href: '/#experience' },
+  { label: 'Projects', href: '/projects/' },
+  { label: 'Awards', href: '/#awards' },
+  { label: 'Contact', href: '/#contact' },
+];
+---
+
+<header class="site-header">
+  <div class="wrap site-header__inner">
+    <a class="site-header__name" href="/">{site.name.toUpperCase()}</a>
+
+    <button class="site-header__toggle" aria-expanded="false" aria-controls="site-nav">
+      <span class="visually-hidden">Menu</span>
+      <Icon name="menu" class="icon-open" />
+      <Icon name="close" class="icon-close" />
+    </button>
+
+    <nav id="site-nav" class="site-nav" aria-label="Main">
+      <ul>
+        {nav.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--paper);
+    border-bottom: 1px solid var(--rule);
+  }
+  .site-header__inner {
+    height: var(--header-h);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .site-header__name {
+    font-weight: 800;
+    font-size: var(--step-1);
+    letter-spacing: 0.02em;
+    text-decoration: none;
+  }
+  .site-nav ul {
+    display: flex;
+    gap: clamp(16px, 2.4vw, 32px);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .site-nav a {
+    font-size: var(--step--1);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 6px 0;
+    border-bottom: 2px solid transparent;
+  }
+  .site-nav a:hover {
+    border-color: var(--blue);
+  }
+  .site-header__toggle {
+    display: none;
+    background: none;
+    border: 0;
+    padding: 8px;
+    margin-right: -8px;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .site-header__toggle :global(svg) {
+    width: 30px;
+    height: 30px;
+  }
+  .site-header__toggle :global(.icon-close),
+  .site-header__toggle[aria-expanded='true'] :global(.icon-open) {
+    display: none;
+  }
+  .site-header__toggle[aria-expanded='true'] :global(.icon-close) {
+    display: block;
+  }
+
+  @media (max-width: 760px) {
+    .site-header__toggle {
+      display: block;
+    }
+    .site-nav {
+      display: none;
+      position: absolute;
+      top: var(--header-h);
+      left: 0;
+      right: 0;
+      background: var(--paper);
+      border-bottom: 1px solid var(--rule);
+    }
+    .site-nav.is-open {
+      display: block;
+    }
+    .site-nav ul {
+      flex-direction: column;
+      gap: 0;
+      padding: 8px var(--gutter) 16px;
+    }
+    .site-nav a {
+      display: block;
+      padding: 12px 0;
+      font-size: var(--step-0);
+    }
+  }
+</style>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('.site-header__toggle');
+  const nav = document.getElementById('site-nav');
+  if (toggle && nav) {
+    const setOpen = (open: boolean) => {
+      toggle.setAttribute('aria-expanded', String(open));
+      nav.classList.toggle('is-open', open);
+    };
+    toggle.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
+    nav.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
+  }
+</script>

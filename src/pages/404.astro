@@ -1,0 +1,25 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+---
+
+<Base title="Page not found">
+  <section class="section">
+    <div class="wrap">
+      <h1 class="nf">404</h1>
+      <p>That page doesn't exist. It may have moved when this site left Wix.</p>
+      <div class="btn-row">
+        <a class="btn" href="/">Home <Icon name="arrow" /></a>
+        <a class="btn btn--ghost" href="/projects/">Projects <Icon name="arrow" /></a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    font-size: var(--step-4);
+    font-weight: 900;
+    margin-bottom: 12px;
+  }
+</style>

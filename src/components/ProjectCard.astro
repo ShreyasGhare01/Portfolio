@@ -1,0 +1,18 @@
+---
+import Icon from './Icon.astro';
+import type { Project } from '../data/projects';
+
+interface Props {
+  project: Project;
+}
+const { project } = Astro.props;
+---
+
+<a class="card" href={`/projects/${project.slug}/`}>
+  <div class="card__panel">
+    <p class="card__meta">{project.dates}</p>
+    <h3 class="card__title">{project.title}</h3>
+    <p class="card__summary">{project.summary}</p>
+  </div>
+  <span class="card__more">More info <Icon name="arrow" /></span>
+</a>

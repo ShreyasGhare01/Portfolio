@@ -1,0 +1,406 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { site, about, education, skills, languages } from '../data/site';
+import { research, leadership, service, interests } from '../data/experience';
+import { researchAwards, honors } from '../data/awards';
+import { projects } from '../data/projects';
+
+const featuredProjects = projects.filter((p) => p.featured);
+const featuredAwards = researchAwards.filter((a) => a.featured);
+const otherAwards = researchAwards.filter((a) => !a.featured);
+---
+
+<Base>
+  <!-- ── Hero ─────────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="wrap hero__inner">
+      <img
+        class="hero__photo"
+        src={site.headshot}
+        alt={`Portrait of ${site.name}`}
+        width="640"
+        height="640"
+        fetchpriority="high"
+      />
+      <div>
+        <p class="hero__name">{site.name.toUpperCase()}</p>
+        <h1 class="hero__title">{site.title.toUpperCase()}</h1>
+        <p class="hero__tag">Purdue University · Class of 2028</p>
+        <div class="btn-row">
+          <a class="btn" href={site.resume} download>Download resume <Icon name="download" /></a>
+          <a class="btn btn--ghost" href="#contact">Get in touch <Icon name="arrow" /></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── About ────────────────────────────────────────────── -->
+  <section class="section" id="about">
+    <div class="wrap section__grid">
+      <h2 class="section__title">About</h2>
+      <div>
+        <Icon name="flask" class="entry__icon" />
+        <h3 class="entry__title">{about.heading}</h3>
+        <div class="about__body">
+          {about.body.map((p) => <p>{p}</p>)}
+        </div>
+        <div class="btn-row">
+          <a class="btn" href={site.linkedin} rel="noopener">LinkedIn <Icon name="arrow" /></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Experience ───────────────────────────────────────── -->
+  <section class="section" id="experience">
+    <div class="wrap section__grid">
+      <h2 class="section__title">Experience</h2>
+      <div>
+        <h3 class="section__sub">Research</h3>
+        {
+          research.map((role) => (
+            <article class="entry">
+              <Icon name="flask" class="entry__icon" />
+              <p class="entry__date">{role.dates}</p>
+              <h4 class="entry__title">{role.title}</h4>
+              <p class="entry__org">
+                {role.link ? <a href={role.link} rel="noopener">{role.org}</a> : role.org}
+              </p>
+              {role.where && <p class="entry__where">{role.where}</p>}
+              <ul>{role.points.map((pt) => <li>{pt}</li>)}</ul>
+            </article>
+          ))
+        }
+
+        <h3 class="section__sub">Leadership</h3>
+        {
+          leadership.map((role) => (
+            <article class="entry">
+              <Icon name="users" class="entry__icon" />
+              <p class="entry__date">{role.dates}</p>
+              <h4 class="entry__title">{role.title}</h4>
+              <p class="entry__org">
+                {role.link ? <a href={role.link} rel="noopener">{role.org}</a> : role.org}
+              </p>
+              {role.summary && <p class="entry__where">{role.summary}</p>}
+              <ul>{role.points.map((pt) => <li>{pt}</li>)}</ul>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Projects ─────────────────────────────────────────── -->
+  <section class="section" id="projects">
+    <div class="wrap">
+      <div class="projects__head">
+        <h2 class="section__title projects__title">Projects</h2>
+        <a class="btn btn--ghost" href="/projects/">All projects <Icon name="arrow" /></a>
+      </div>
+      <div class="cards">
+        {featuredProjects.map((p) => <ProjectCard project={p} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Awards ───────────────────────────────────────────── -->
+  <section class="section" id="awards">
+    <div class="wrap section__grid">
+      <h2 class="section__title">Awards</h2>
+      <div>
+        <ul class="highlights">
+          {
+            featuredAwards.map((a) => (
+              <li class="highlight">
+                <Icon name="award" class="entry__icon" />
+                <p class="highlight__name">{a.name}</p>
+                <p class="highlight__org">{a.org}</p>
+                {a.year && <p class="highlight__year">{a.year}</p>}
+              </li>
+            ))
+          }
+        </ul>
+
+        <h3 class="section__sub">More research recognition</h3>
+        <ul class="award-list">
+          {
+            otherAwards.map((a) => (
+              <li>
+                <span class="award-list__year">{a.year ?? ''}</span>
+                <span>
+                  <strong>{a.name}</strong>, {a.org}
+                  {a.note && <span class="award-list__note">{a.note}</span>}
+                </span>
+              </li>
+            ))
+          }
+        </ul>
+
+        <h3 class="section__sub">Scholastic honors</h3>
+        <ul class="award-list">
+          {
+            honors.map((a) => (
+              <li>
+                <span class="award-list__year">{a.year ?? ''}</span>
+                <span>
+                  <strong>{a.name}</strong>, {a.org}
+                  {a.note && <span class="award-list__note">{a.note}</span>}
+                </span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Skills ───────────────────────────────────────────── -->
+  <section class="section" id="skills">
+    <div class="wrap section__grid">
+      <h2 class="section__title">Skills</h2>
+      <div>
+        {
+          skills.map((group) => (
+            <div class="skill-group">
+              <h3 class="entry__title">{group.area}</h3>
+              <ul class="chips">{group.items.map((i) => <li>{i}</li>)}</ul>
+            </div>
+          ))
+        }
+        <div class="skill-group">
+          <h3 class="entry__title">Languages</h3>
+          <ul class="lang-list">
+            {languages.map((l) => <li><strong>{l.name}</strong> <span class="muted">· {l.level}</span></li>)}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Education ────────────────────────────────────────── -->
+  <section class="section" id="education">
+    <div class="wrap section__grid">
+      <h2 class="section__title">Education</h2>
+      <div>
+        {
+          education.map((e) => (
+            <article class="entry">
+              <Icon name="cap" class="entry__icon" />
+              <h3 class="entry__title">{e.degree}</h3>
+              <p class="entry__org">{e.school}</p>
+              <p class="entry__where">{e.detail}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Beyond the lab ───────────────────────────────────── -->
+  <section class="section" id="beyond">
+    <div class="wrap section__grid">
+      <h2 class="section__title">Beyond the Lab</h2>
+      <div class="beyond">
+        <div>
+          <h3 class="section__sub">Service</h3>
+          <ul class="simple-list">
+            {service.map((s) => <li><strong>{s.name}</strong> <span class="muted">{s.dates}</span><br />{s.note}</li>)}
+          </ul>
+        </div>
+        <div>
+          <h3 class="section__sub">Interests</h3>
+          <ul class="simple-list">
+            {interests.map((s) => <li><strong>{s.name}</strong><br />{s.note}</li>)}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Contact ──────────────────────────────────────────── -->
+  <section class="section contact" id="contact">
+    <div class="wrap section__grid">
+      <h2 class="section__title">Contact</h2>
+      <div>
+        <p class="contact__lead">
+          I'm looking for research and internship opportunities in biomedical engineering. The best way to reach me is by email.
+        </p>
+        <a class="contact__email" href={`mailto:${site.email}`}><Icon name="mail" />{site.email}</a>
+        <div class="btn-row">
+          <a class="btn" href={site.linkedin} rel="noopener">LinkedIn <Icon name="arrow" /></a>
+          <a class="btn" href={site.github} rel="noopener">GitHub <Icon name="arrow" /></a>
+          <a class="btn btn--ghost" href={site.resume} download>Resume <Icon name="download" /></a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    padding: clamp(48px, 9vw, 120px) 0 clamp(40px, 7vw, 96px);
+  }
+  .hero__inner {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: clamp(24px, 5vw, 64px);
+  }
+  .hero__photo {
+    width: clamp(160px, 22vw, 260px);
+    height: auto;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--ink);
+    box-shadow: 8px 8px 0 var(--mint);
+  }
+  .hero__name {
+    font-size: var(--step-2);
+    font-weight: 700;
+    margin: 0;
+  }
+  .hero__title {
+    font-size: var(--step-4);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin: 4px 0 8px;
+  }
+  .hero__tag {
+    color: var(--muted);
+    margin: 0 0 24px;
+  }
+  @media (max-width: 640px) {
+    .hero__inner {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .about__body {
+    margin: 12px 0 24px;
+    max-width: 60ch;
+  }
+
+  .projects__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .projects__title {
+    position: static;
+  }
+
+  .highlights {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 8px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  .highlight {
+    border: 1px solid var(--ink);
+    background: var(--mint-soft);
+    padding: 18px;
+  }
+  .highlight p {
+    margin: 0;
+  }
+  .highlight__name {
+    font-weight: 900;
+    line-height: 1.35;
+  }
+  .highlight__org {
+    font-size: var(--step--1);
+    margin-top: 4px !important;
+  }
+  .highlight__year {
+    font-size: var(--step--1);
+    color: var(--muted);
+    margin-top: 8px !important;
+  }
+
+  .award-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .award-list li {
+    display: grid;
+    grid-template-columns: 4.5em 1fr;
+    gap: 16px;
+    padding: 12px 0;
+    border-top: 1px dashed #c9c9c6;
+  }
+  .award-list__year {
+    color: var(--muted);
+    font-size: var(--step--1);
+    padding-top: 2px;
+  }
+  .award-list__note {
+    display: block;
+    font-size: var(--step--1);
+    color: var(--muted);
+  }
+
+  .skill-group + .skill-group {
+    margin-top: 28px;
+  }
+  .lang-list {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 0;
+  }
+  .lang-list li {
+    margin-bottom: 4px;
+  }
+
+  .beyond {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 32px;
+  }
+  .beyond .section__sub {
+    margin-top: 0 !important;
+  }
+  .simple-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .simple-list li {
+    padding: 12px 0;
+    border-top: 1px dashed #c9c9c6;
+    font-size: var(--step--1);
+  }
+  .simple-list strong {
+    font-size: var(--step-0);
+  }
+
+  .contact__lead {
+    max-width: 52ch;
+    font-size: var(--step-1);
+  }
+  .contact__email {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-size: var(--step-2);
+    font-weight: 800;
+    text-decoration: none;
+    border-bottom: 3px solid var(--mint);
+    margin: 8px 0 28px;
+    overflow-wrap: anywhere;
+  }
+  .contact__email :global(svg) {
+    width: 0.9em;
+    height: 0.9em;
+    flex: none;
+  }
+</style>

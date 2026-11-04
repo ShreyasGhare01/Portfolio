@@ -1,0 +1,39 @@
+---
+import { site } from '../data/site';
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="wrap site-footer__inner">
+    <p>© {year} {site.name}</p>
+    <ul>
+      <li><a href={`mailto:${site.email}`}>Email</a></li>
+      <li><a href={site.linkedin} rel="noopener">LinkedIn</a></li>
+      <li><a href={site.github} rel="noopener">GitHub</a></li>
+    </ul>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--rule);
+    padding: 28px 0;
+    font-size: var(--step--1);
+  }
+  .site-footer__inner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .site-footer p {
+    margin: 0;
+  }
+  .site-footer ul {
+    display: flex;
+    gap: 20px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+</style>
