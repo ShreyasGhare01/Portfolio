@@ -5,6 +5,9 @@
 // and pick a `category`. Set `featured: true` to show it on
 // the home page. Put images in /public/projects/ and list
 // them in `images` (optional).
+//
+// `tags` drive the dashed threads in the project web: any two
+// projects that share a tag get connected.
 // ─────────────────────────────────────────────────────────────
 
 export type Category = 'college' | 'research' | 'personal';
@@ -12,6 +15,8 @@ export type Category = 'college' | 'research' | 'personal';
 export type Project = {
   slug: string;
   title: string;
+  short: string; // short label used in the project web
+  tags: string[]; // skills/themes; projects sharing a tag are linked in the web
   category: Category;
   dates: string;
   summary: string; // one or two sentences, shown on cards
@@ -42,6 +47,8 @@ export const projects: Project[] = [
   {
     slug: 'arduino-matlab-ecg',
     title: 'Functioning ECG with an Arduino-MATLAB System',
+    short: 'ECG System',
+    tags: ['Electronics', 'Biomedical', 'Programming'],
     category: 'college',
     dates: 'Spring 2026',
     featured: true,
@@ -59,6 +66,8 @@ export const projects: Project[] = [
   {
     slug: 'epics-speedway-wind-tunnel',
     title: 'Purdue EPICS: SPEEDWAY Wind Tunnel',
+    short: 'Wind Tunnel',
+    tags: ['CAD', '3D Printing', 'Design'],
     category: 'college',
     dates: 'Fall 2024 – Spring 2025',
     featured: true,
@@ -79,6 +88,8 @@ export const projects: Project[] = [
   {
     slug: 'aldose-reductase-brain-inflammation',
     title: 'Pathogenic Role of Aldose Reductase in Brain Inflammation',
+    short: 'Aldose Reductase',
+    tags: ['Cell Biology', 'Neuroscience', 'Biomedical'],
     category: 'research',
     dates: '2022 – 2023',
     featured: true,
@@ -98,6 +109,8 @@ export const projects: Project[] = [
   {
     slug: 'gut-brain-alcohol-research',
     title: 'Brain Inflammation & the Gut-Brain Axis',
+    short: 'Gut-Brain Axis',
+    tags: ['Cell Biology', 'Neuroscience'],
     category: 'research',
     dates: '2022 – 2024',
     summary:
@@ -115,6 +128,8 @@ export const projects: Project[] = [
   {
     slug: 'peltier-thermoelectric-effects',
     title: 'Peltier Chips and the Reversibility of Thermoelectric Effects',
+    short: 'Peltier Chip',
+    tags: ['Energy', 'Electronics', 'Physics'],
     category: 'research',
     dates: '2021 – 2022',
     featured: true,
@@ -132,6 +147,8 @@ export const projects: Project[] = [
   {
     slug: 'solar-panel-efficiency',
     title: 'Methods to Improve the Efficiency of Solar Panels',
+    short: 'Solar Panels',
+    tags: ['Energy', 'Design'],
     category: 'research',
     dates: '2020 – 2021',
     featured: true,
@@ -152,6 +169,8 @@ export const projects: Project[] = [
   {
     slug: 'pick-a-ball-robot',
     title: 'Pick-A-Ball Robot: Comparing Search Strategies',
+    short: 'Pick-A-Ball Robot',
+    tags: ['Robotics', 'Programming'],
     category: 'research',
     dates: '2019 – 2020',
     featured: true,

@@ -47,7 +47,7 @@ const otherAwards = researchAwards.filter((a) => !a.featured);
           {about.body.map((p) => <p>{p}</p>)}
         </div>
         <div class="btn-row">
-          <a class="btn" href={site.linkedin} rel="noopener">LinkedIn <Icon name="arrow" /></a>
+          <a class="btn" href={site.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn <Icon name="arrow" /></a>
         </div>
       </div>
     </div>
@@ -66,7 +66,7 @@ const otherAwards = researchAwards.filter((a) => !a.featured);
               <p class="entry__date">{role.dates}</p>
               <h4 class="entry__title">{role.title}</h4>
               <p class="entry__org">
-                {role.link ? <a href={role.link} rel="noopener">{role.org}</a> : role.org}
+                {role.link ? <a href={role.link} target="_blank" rel="noopener noreferrer">{role.org}</a> : role.org}
               </p>
               {role.where && <p class="entry__where">{role.where}</p>}
               <ul>{role.points.map((pt) => <li>{pt}</li>)}</ul>
@@ -82,7 +82,7 @@ const otherAwards = researchAwards.filter((a) => !a.featured);
               <p class="entry__date">{role.dates}</p>
               <h4 class="entry__title">{role.title}</h4>
               <p class="entry__org">
-                {role.link ? <a href={role.link} rel="noopener">{role.org}</a> : role.org}
+                {role.link ? <a href={role.link} target="_blank" rel="noopener noreferrer">{role.org}</a> : role.org}
               </p>
               {role.summary && <p class="entry__where">{role.summary}</p>}
               <ul>{role.points.map((pt) => <li>{pt}</li>)}</ul>
@@ -230,8 +230,8 @@ const otherAwards = researchAwards.filter((a) => !a.featured);
         </p>
         <a class="contact__email" href={`mailto:${site.email}`}><Icon name="mail" />{site.email}</a>
         <div class="btn-row">
-          <a class="btn" href={site.linkedin} rel="noopener">LinkedIn <Icon name="arrow" /></a>
-          <a class="btn" href={site.github} rel="noopener">GitHub <Icon name="arrow" /></a>
+          <a class="btn" href={site.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn <Icon name="arrow" /></a>
+          <a class="btn" href={site.github} target="_blank" rel="noopener noreferrer">GitHub <Icon name="arrow" /></a>
           <a class="btn btn--ghost" href={site.resume} download>Resume <Icon name="download" /></a>
         </div>
       </div>
@@ -256,7 +256,7 @@ const otherAwards = researchAwards.filter((a) => !a.featured);
     border-radius: 50%;
     object-fit: cover;
     border: 1px solid var(--ink);
-    box-shadow: 8px 8px 0 var(--mint);
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.22), 0 3px 8px rgba(0, 0, 0, 0.12);
   }
   .hero__name {
     font-size: var(--step-2);

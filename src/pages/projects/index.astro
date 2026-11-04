@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
+import ProjectWeb from '../../components/ProjectWeb.astro';
 import { projects, categories, type Category } from '../../data/projects';
 
 const order: Category[] = ['college', 'research', 'personal'];
@@ -16,9 +17,11 @@ const groups = order
       <nav class="jump" aria-label="Project categories">
         {groups.map((g) => <a href={`#${g.key}`}>{g.name}</a>)}
       </nav>
+      <ProjectWeb />
     </div>
   </section>
 
+  <div id="project-list"></div>
   {
     groups.map((g) => (
       <section class="section" id={g.key}>

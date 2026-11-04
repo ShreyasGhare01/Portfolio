@@ -1,0 +1,584 @@
+---
+// ─────────────────────────────────────────────────────────────
+// Interactive "web" of every project.
+//   hub (center) → categories (inner ring) → projects (outer ring)
+//   dashed threads connect projects that share a tag.
+// The layout is computed here at build time from projects.ts,
+// so adding a project re-arranges the web automatically.
+// ─────────────────────────────────────────────────────────────
+import { projects, categories, type Category } from '../data/projects';
+
+const W = 1000;
+const H = 620;
+const cx = W / 2;
+const cy = H / 2;
+const ring1 = { rx: 170, ry: 108 }; // categories
+const ring2 = { rx: 312, ry: 222 }; // projects
+
+const R_HUB = 50;
+const R_CAT = 40;
+const R_PROJ = 15;
+
+const colors: Record<Category, string> = {
+  college: '#83EAC5',
+  research: '#7FB0F2',
+  personal: '#FFD66B',
+};
+
+const order: Category[] = ['college', 'research', 'personal'];
+const groups = order
+  .map((key) => ({ key, items: projects.filter((p) => p.category === key) }))
+  .filter((g) => g.items.length > 0);
+
+// One slot per project plus one empty slot between categories.
+const totalSlots = projects.length + groups.length;
+const step = (Math.PI * 2) / totalSlots;
+
+type Pt = { x: number; y: number; a: number };
+const onRing = (a: number, r: { rx: number; ry: number }): Pt => ({
+  x: cx + Math.cos(a) * r.rx,
+  y: cy + Math.sin(a) * r.ry,
+  a,
+});
+
+// Rotate so the first category is centered on the left (180°).
+const firstCount = groups[0]?.items.length ?? 1;
+const offset = Math.PI - ((firstCount - 1) / 2) * step;
+
+let slot = 0;
+const catNodes: { key: Category; name: string; color: string; pt: Pt; lines: string[] }[] = [];
+const projNodes: {
+  slug: string;
+  short: string;
+  dates: string;
+  cat: Category;
+  color: string;
+  pt: Pt;
+  label: { x: number; y: number; anchor: string; dy2: number };
+}[] = [];
+
+for (const g of groups) {
+  const angles = g.items.map((_, i) => offset + (slot + i) * step);
+  const mid = (angles[0] + angles[angles.length - 1]) / 2;
+  const name = categories[g.key].name;
+  catNodes.push({ key: g.key, name, color: colors[g.key], pt: onRing(mid, ring1), lines: name.toUpperCase().split(' ') });
+
+  g.items.forEach((p, i) => {
+    const pt = onRing(angles[i], ring2);
+    const dx = Math.cos(pt.a);
+    const dy = Math.sin(pt.a);
+    let label;
+    if (Math.abs(dx) >= 0.42) {
+      label = { x: pt.x + (dx > 0 ? 1 : -1) * (R_PROJ + 12), y: pt.y - 3, anchor: dx > 0 ? 'start' : 'end', dy2: 17 };
+    } else if (dy < 0) {
+      label = { x: pt.x, y: pt.y - R_PROJ - 27, anchor: 'middle', dy2: 17 };
+    } else {
+      label = { x: pt.x, y: pt.y + R_PROJ + 21, anchor: 'middle', dy2: 17 };
+    }
+    projNodes.push({ slug: p.slug, short: p.short, dates: p.dates, cat: g.key, color: colors[g.key], pt, label });
+  });
+  slot += g.items.length + 1;
+}
+
+// Threads between projects that share at least one tag.
+const threads: { a: string; b: string; tags: string[]; d: string }[] = [];
+for (let i = 0; i < projects.length; i++) {
+  for (let j = i + 1; j < projects.length; j++) {
+    const shared = projects[i].tags.filter((t) => projects[j].tags.includes(t));
+    if (!shared.length) continue;
+    const A = projNodes.find((n) => n.slug === projects[i].slug)!.pt;
+    const B = projNodes.find((n) => n.slug === projects[j].slug)!.pt;
+    // Curve bows toward the center so threads weave through the web.
+    const mx = (A.x + B.x) / 2;
+    const my = (A.y + B.y) / 2;
+    const k = 0.42;
+    const qx = mx + (cx - mx) * k;
+    const qy = my + (cy - my) * k;
+    threads.push({ a: projects[i].slug, b: projects[j].slug, tags: shared, d: `M${A.x.toFixed(1)},${A.y.toFixed(1)} Q${qx.toFixed(1)},${qy.toFixed(1)} ${B.x.toFixed(1)},${B.y.toFixed(1)}` });
+  }
+}
+
+// Data for the hover panel (kept small).
+const panelData = Object.fromEntries(
+  projects.map((p) => [
+    p.slug,
+    { title: p.title, dates: p.dates, summary: p.summary, tags: p.tags, cat: categories[p.category].name },
+  ]),
+);
+const catData = Object.fromEntries(
+  groups.map((g) => [g.key, { name: categories[g.key].name, blurb: categories[g.key].blurb, count: g.items.length }]),
+);
+---
+
+<section class="web" aria-label="Project web">
+  <div class="web__scroll">
+    <svg class="web__svg" viewBox={`0 0 ${W} ${H}`} role="group" aria-labelledby="web-title">
+      <title id="web-title">Web of all projects, grouped by category and connected by shared skills</title>
+      <defs>
+        <pattern id="web-dots" width="24" height="24" patternUnits="userSpaceOnUse">
+          <circle cx="1.5" cy="1.5" r="1.1" fill="#e4e4e0"></circle>
+        </pattern>
+      </defs>
+      <rect width={W} height={H} fill="url(#web-dots)"></rect>
+
+      <!-- Faint guide rings -->
+      <ellipse class="web__ring" cx={cx} cy={cy} rx={ring1.rx} ry={ring1.ry}></ellipse>
+      <ellipse class="web__ring" cx={cx} cy={cy} rx={ring2.rx} ry={ring2.ry}></ellipse>
+
+      <!-- Shared-skill threads -->
+      <g class="web__threads">
+        {threads.map((t) => <path class="web__thread" d={t.d} data-a={t.a} data-b={t.b} data-tags={t.tags.join(', ')} />)}
+      </g>
+
+      <!-- Tree links -->
+      <g class="web__links">
+        {catNodes.map((c) => <line class="web__link" x1={cx} y1={cy} x2={c.pt.x} y2={c.pt.y} data-a="hub" data-b={c.key} />)}
+        {
+          projNodes.map((p) => {
+            const c = catNodes.find((n) => n.key === p.cat)!;
+            return <line class="web__link" x1={c.pt.x} y1={c.pt.y} x2={p.pt.x} y2={p.pt.y} data-a={p.cat} data-b={p.slug} />;
+          })
+        }
+      </g>
+
+      <!-- Hub -->
+      <a href="#project-list" class="web__node web__node--hub" data-id="hub" aria-label="Jump to the project list">
+        <circle cx={cx} cy={cy} r={R_HUB}></circle>
+        <text x={cx} y={cy - 2} text-anchor="middle" class="web__hub-text">PROJECTS</text>
+        <text x={cx} y={cy + 16} text-anchor="middle" class="web__hub-sub">{projects.length} total</text>
+      </a>
+
+      <!-- Categories -->
+      {
+        catNodes.map((c) => (
+          <a href={`#${c.key}`} class="web__node web__node--cat" data-id={c.key} data-kind="cat" aria-label={`${c.name} projects`}>
+            <circle cx={c.pt.x} cy={c.pt.y} r={R_CAT} fill={c.color} />
+            {c.lines.map((line, i) => (
+              <text x={c.pt.x} y={c.pt.y + 4 + (i - (c.lines.length - 1) / 2) * 14} text-anchor="middle" class="web__cat-text">
+                {line}
+              </text>
+            ))}
+          </a>
+        ))
+      }
+
+      <!-- Projects -->
+      {
+        projNodes.map((p) => (
+          <a href={`/projects/${p.slug}/`} class="web__node web__node--proj" data-id={p.slug} data-kind="proj" data-cat={p.cat} style={`--c:${p.color}`}>
+            <circle class="web__hit" cx={p.pt.x} cy={p.pt.y} r={R_PROJ + 14} />
+            <circle class="web__dot" cx={p.pt.x} cy={p.pt.y} r={R_PROJ} />
+            <circle class="web__core" cx={p.pt.x} cy={p.pt.y} r={5} fill={p.color} />
+            <text x={p.label.x} y={p.label.y} text-anchor={p.label.anchor} class="web__label">{p.short}</text>
+            <text x={p.label.x} y={p.label.y + p.label.dy2} text-anchor={p.label.anchor} class="web__date">{p.dates}</text>
+          </a>
+        ))
+      }
+    </svg>
+  </div>
+
+  <aside class="web__panel" aria-live="polite">
+    <div class="web__panel-default">
+      <p class="web__kicker">Explore</p>
+      <p class="web__panel-title">Every project, connected</p>
+      <p class="web__panel-text">
+        <span class="web__hint-desktop">Hover a project to see what it is. Click to open it.</span>
+        <span class="web__hint-touch">Swipe sideways to see the whole web. Tap a project to preview it, tap again to open.</span>
+        Dashed threads link projects that share skills.
+      </p>
+      <ul class="web__legend">
+        <li><span class="web__swatch web__swatch--line"></span>Category</li>
+        <li><span class="web__swatch web__swatch--dash"></span>Shared skill</li>
+        {catNodes.map((c) => <li><span class="web__swatch" style={`background:${c.color}`} />{c.name}</li>)}
+      </ul>
+    </div>
+    <div class="web__panel-live" hidden>
+      <p class="web__kicker" data-f="kicker"></p>
+      <p class="web__panel-title" data-f="title"></p>
+      <p class="web__panel-text" data-f="summary"></p>
+      <ul class="chips" data-f="tags"></ul>
+      <a class="web__open" data-f="open" href="#">Open project →</a>
+    </div>
+  </aside>
+
+  <script type="application/json" id="web-data" set:html={JSON.stringify({ projects: panelData, cats: catData })} />
+</section>
+
+<style>
+  .web {
+    position: relative;
+    border: 1px solid var(--ink);
+    background: var(--paper);
+    margin-top: 36px;
+  }
+  .web__scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+  .web__svg {
+    display: block;
+    width: 100%;
+    min-width: 820px;
+    height: auto;
+    font-family: var(--font);
+  }
+
+  .web__ring {
+    fill: none;
+    stroke: #ececea;
+    stroke-width: 1;
+  }
+  .web__link {
+    stroke: var(--ink);
+    stroke-width: 1.2;
+    transition: opacity 0.2s, stroke-width 0.2s;
+  }
+  .web__thread {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 1;
+    stroke-dasharray: 4 5;
+    opacity: 0.28;
+    transition: opacity 0.2s, stroke 0.2s, stroke-width 0.2s;
+  }
+
+  .web__node {
+    cursor: pointer;
+    outline: none;
+    transition: opacity 0.2s;
+  }
+  .web__node circle {
+    transition: transform 0.2s ease, fill 0.2s;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  .web__node--hub circle {
+    fill: var(--ink);
+  }
+  .web__hub-text {
+    fill: var(--paper);
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+  .web__hub-sub {
+    fill: #bdbdbd;
+    font-size: 10.5px;
+  }
+  .web__node--cat circle {
+    stroke: var(--ink);
+    stroke-width: 1.4;
+  }
+  .web__cat-text {
+    font-size: 11.5px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    fill: var(--ink);
+    pointer-events: none;
+  }
+  .web__hit {
+    fill: transparent;
+  }
+  .web__dot {
+    fill: var(--paper);
+    stroke: var(--ink);
+    stroke-width: 1.5;
+  }
+  .web__label {
+    font-size: 14px;
+    font-weight: 800;
+    fill: var(--ink);
+  }
+  .web__date {
+    font-size: 11px;
+    fill: var(--muted);
+  }
+
+  .web__node:hover .web__dot,
+  .web__node:focus-visible .web__dot,
+  .web__node.is-active .web__dot {
+    fill: var(--c);
+    transform: scale(1.35);
+  }
+  .web__node--cat:hover circle,
+  .web__node--cat:focus-visible circle,
+  .web__node--cat.is-active circle {
+    transform: scale(1.08);
+  }
+  .web__node:focus-visible .web__label {
+    text-decoration: underline;
+  }
+
+  /* Focus mode: dim everything not connected to the hovered node */
+  .web.is-focus .web__node:not(.is-lit),
+  .web.is-focus .web__link:not(.is-lit) {
+    opacity: 0.18;
+  }
+  .web.is-focus .web__thread:not(.is-lit) {
+    opacity: 0.06;
+  }
+  .web.is-focus .web__link.is-lit {
+    stroke-width: 2;
+  }
+  .web.is-focus .web__thread.is-lit {
+    opacity: 1;
+    stroke: var(--blue);
+    stroke-width: 1.8;
+  }
+
+  /* Info panel: a strip under the web so it never covers a node */
+  .web__panel {
+    border-top: 1px solid var(--ink);
+    padding: 18px clamp(16px, 3vw, 28px);
+    min-height: 132px;
+    font-size: var(--step--1);
+  }
+  .web__panel-default,
+  .web__panel-live {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 32px;
+    align-items: start;
+  }
+  .web__panel-default[hidden],
+  .web__panel-live[hidden] {
+    display: none;
+  }
+  .web__panel-default > :not(.web__legend),
+  .web__panel-live > :not(.chips):not(.web__open) {
+    grid-column: 1;
+  }
+  .web__panel-live .chips,
+  .web__panel-live .web__open,
+  .web__panel-default .web__legend {
+    grid-column: 2;
+  }
+  .web__panel-live .chips {
+    grid-row: 1 / span 2;
+    justify-content: flex-end;
+    max-width: 280px;
+    margin: 0 !important;
+  }
+  .web__panel-live .web__open {
+    grid-row: 3;
+    justify-self: end;
+  }
+  .web__panel-default .web__legend {
+    grid-row: 1 / span 3;
+    margin: 0 !important;
+  }
+  .web__panel p {
+    margin: 0;
+  }
+  .web__kicker {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+  .web__panel-title {
+    font-weight: 900;
+    font-size: var(--step-0);
+    line-height: 1.35;
+    margin: 4px 0 6px !important;
+  }
+  .web__panel-text {
+    line-height: 1.55;
+  }
+  .web__panel .chips {
+    margin-top: 10px;
+  }
+  .web__panel .chips li {
+    font-size: 11px;
+    padding: 1px 9px;
+  }
+  .web__open {
+    display: inline-block;
+    margin-top: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 11.5px;
+    text-decoration: none;
+    border-bottom: 2px solid var(--mint);
+  }
+  .web__legend {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 12px;
+    font-size: 11px;
+  }
+  .web__legend li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .web__swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 1px solid var(--ink);
+    flex: none;
+  }
+  .web__swatch--line,
+  .web__swatch--dash {
+    width: 18px;
+    height: 0;
+    border-radius: 0;
+    border: 0;
+    border-top: 1.5px solid var(--ink);
+  }
+  .web__swatch--dash {
+    border-top-style: dashed;
+    opacity: 0.6;
+  }
+
+  @media (max-width: 760px) {
+    .web__panel-default,
+    .web__panel-live {
+      grid-template-columns: 1fr;
+    }
+    .web__panel-default > *,
+    .web__panel-live > * {
+      grid-column: 1 !important;
+      grid-row: auto !important;
+      justify-self: start !important;
+      justify-content: flex-start !important;
+    }
+    .web__panel-live .chips,
+    .web__panel-default .web__legend {
+      margin-top: 12px !important;
+    }
+  }
+  .web__hint-touch {
+    display: none;
+  }
+  @media (hover: none) {
+    .web__hint-desktop {
+      display: none;
+    }
+    .web__hint-touch {
+      display: inline;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .web * {
+      transition: none !important;
+    }
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('.web');
+  const dataEl = document.getElementById('web-data');
+  if (root && dataEl) {
+    const data = JSON.parse(dataEl.textContent || '{}') as {
+      projects: Record<string, { title: string; dates: string; summary: string; tags: string[]; cat: string }>;
+      cats: Record<string, { name: string; blurb: string; count: number }>;
+    };
+    const nodes = [...root.querySelectorAll<SVGAElement>('.web__node')];
+    const links = [...root.querySelectorAll<SVGElement>('.web__link, .web__thread')];
+    const panelDefault = root.querySelector<HTMLElement>('.web__panel-default')!;
+    const panelLive = root.querySelector<HTMLElement>('.web__panel-live')!;
+    const f = (k: string) => panelLive.querySelector<HTMLElement>(`[data-f="${k}"]`)!;
+    let pinned: string | null = null;
+    let lastPointer = 'mouse';
+
+    const clear = () => {
+      root.classList.remove('is-focus');
+      root.querySelectorAll('.is-lit, .is-active').forEach((el) => el.classList.remove('is-lit', 'is-active'));
+      panelLive.hidden = true;
+      panelDefault.hidden = false;
+    };
+
+    const light = (id: string) => {
+      clear();
+      const node = nodes.find((n) => n.dataset.id === id);
+      if (!node) return;
+      root.classList.add('is-focus');
+      node.classList.add('is-lit', 'is-active');
+      const lit = new Set<string>([id]);
+
+      if (node.dataset.kind === 'proj') {
+        // project → its category and hub, plus anything sharing a tag
+        lit.add(node.dataset.cat!);
+        lit.add('hub');
+        links.forEach((l) => {
+          const a = l.dataset.a!, b = l.dataset.b!;
+          const isTree = l.classList.contains('web__link');
+          if (isTree && ((a === node.dataset.cat && b === id) || (a === 'hub' && b === node.dataset.cat))) l.classList.add('is-lit');
+          if (!isTree && (a === id || b === id)) {
+            l.classList.add('is-lit');
+            lit.add(a === id ? b : a);
+          }
+        });
+        const p = data.projects[id];
+        f('kicker').textContent = `${p.cat} · ${p.dates}`;
+        f('title').textContent = p.title;
+        f('summary').textContent = p.summary;
+        f('tags').innerHTML = p.tags.map((t) => `<li>${t}</li>`).join('');
+        f('open').setAttribute('href', `/projects/${id}/`);
+        f('open').hidden = false;
+      } else if (node.dataset.kind === 'cat') {
+        lit.add('hub');
+        links.forEach((l) => {
+          if (!l.classList.contains('web__link')) return;
+          if (l.dataset.a === id || (l.dataset.a === 'hub' && l.dataset.b === id)) {
+            l.classList.add('is-lit');
+            lit.add(l.dataset.b!);
+          }
+        });
+        const c = data.cats[id];
+        f('kicker').textContent = `${c.count} project${c.count === 1 ? '' : 's'}`;
+        f('title').textContent = c.name;
+        f('summary').textContent = c.blurb;
+        f('tags').innerHTML = '';
+        f('open').setAttribute('href', `#${id}`);
+        f('open').textContent = 'See the list →';
+      } else {
+        return clear();
+      }
+      if (node.dataset.kind === 'proj') f('open').textContent = 'Open project →';
+      nodes.forEach((n) => lit.has(n.dataset.id!) && n.classList.add('is-lit'));
+      panelDefault.hidden = true;
+      panelLive.hidden = false;
+    };
+
+    nodes.forEach((n) => {
+      const id = n.dataset.id!;
+      n.addEventListener('pointerdown', (e) => (lastPointer = e.pointerType));
+      n.addEventListener('pointerenter', (e) => {
+        if (e.pointerType === 'mouse' && !pinned) light(id);
+      });
+      n.addEventListener('pointerleave', (e) => {
+        if (e.pointerType === 'mouse' && !pinned) clear();
+      });
+      n.addEventListener('focus', () => light(id));
+      n.addEventListener('blur', () => !pinned && clear());
+      // On touch: first tap previews, second tap opens.
+      n.addEventListener('click', (e) => {
+        if (lastPointer !== 'mouse' && id !== 'hub' && pinned !== id) {
+          e.preventDefault();
+          pinned = id;
+          light(id);
+        }
+      });
+    });
+
+    // Tap empty space to dismiss a pinned preview.
+    root.querySelector('.web__svg')!.addEventListener('click', (e) => {
+      if (!(e.target as Element).closest('.web__node')) {
+        pinned = null;
+        clear();
+      }
+    });
+
+    // On narrow screens, start the scroll position centered on the hub.
+    const scroller = root.querySelector<HTMLElement>('.web__scroll')!;
+    scroller.scrollLeft = (scroller.scrollWidth - scroller.clientWidth) / 2;
+  }
+</script>

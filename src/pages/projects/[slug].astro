@@ -48,13 +48,16 @@ const category = categories[project.category];
         </dl>
 
         <div class="project__body">
+          <ul class="chips project__tags" aria-label="Skills">
+            {project.tags.map((t) => <li>{t}</li>)}
+          </ul>
           {project.description.map((p) => <p>{p}</p>)}
 
           {
             project.links && (
               <div class="btn-row">
                 {project.links.map((l) => (
-                  <a class="btn" href={l.href} rel="noopener">
+                  <a class="btn" href={l.href} target="_blank" rel="noopener noreferrer">
                     {l.label} <Icon name="arrow" />
                   </a>
                 ))}
@@ -151,6 +154,9 @@ const category = categories[project.category];
   }
   .project__body {
     max-width: 64ch;
+  }
+  .project__tags {
+    margin: 0 0 20px;
   }
   .project__body .btn-row {
     margin-top: 8px;

@@ -67,6 +67,7 @@ export const leadership: Role[] = [
     title: 'Engineering & Technology Lead Instructor',
     org: 'STEMY',
     dates: '2021 – 2024',
+    link: 'https://www.stemy.org/',
     summary:
       'Louisville nonprofit breaking down social, racial, and gender barriers in STEM for younger students.',
     points: [
