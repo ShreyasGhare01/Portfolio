@@ -66,7 +66,7 @@ export const projects: Project[] = [
     ],
     facts: [
       { label: 'Course', value: 'BME 23101, Bioinstrumentation & Circuit Theory Lab, Purdue' },
-      { label: 'Team', value: 'Shreyas Ghare and Adam White' },
+      { label: 'Team', value: 'Two-person team' },
       { label: 'Tools', value: 'LTspice, Arduino Uno R4 WiFi, MATLAB, oscilloscope frequency response analysis' },
       { label: 'Results', value: 'Notch at 60.3 Hz; passband 0.45 to 172 Hz; heart rate detected at 95.7 BPM' },
     ],
