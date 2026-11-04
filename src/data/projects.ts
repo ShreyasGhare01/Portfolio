@@ -23,7 +23,10 @@ export type Project = {
   description: string[]; // paragraphs on the project page
   facts: { label: string; value: string }[];
   links?: { label: string; href: string }[];
-  images?: { src: string; alt: string }[];
+  // Optional step-by-step flow drawn as a diagram on the project page
+  pipeline?: { title: string; steps: { label: string; detail?: string }[] };
+  // `wide: true` makes an image span the full gallery width
+  images?: { src: string; alt: string; caption?: string; wide?: boolean; width?: number; height?: number }[];
   featured?: boolean;
 };
 
@@ -53,14 +56,64 @@ export const projects: Project[] = [
     dates: 'Spring 2026',
     featured: true,
     summary:
-      'An analog front end and Arduino that capture heart signals from skin probes, with MATLAB processing them into a live ECG trace.',
+      'A three-lead ECG built from scratch: amplifiers and filters that turn millivolt heart signals into a clean waveform, plus an Arduino and MATLAB that detect heartbeats and classify heart rate.',
     description: [
-      'Designed and built a working electrocardiogram as a circuits project. Electrode probes feed an analog front end of RC filters and operational amplifiers that amplify the small cardiac signal and reject noise.',
-      'An Arduino microcontroller digitizes the conditioned signal, and MATLAB processes the data and displays the ECG waveform.',
+      'For the final design project in Bioinstrumentation and Circuit Theory Lab, my partner and I designed and built an electrocardiogram circuit that converts the heart\'s millivolt-level electrical activity into a readable ECG. We recorded a Lead II ECG from a human subject using limb electrodes connected to the breadboard through an audio jack.',
+      'The signal chain starts with an instrumentation amplifier (gain of 95, under a design limit of 100) followed by a non-inverting amplifier (gain of about 10), for a total gain near 1,000 that brings the signal close to 1 V. A second-order 60 Hz notch filter removes power-line interference. A cascaded second-order high-pass and low-pass filter forms a 0.5 to 150 Hz bandpass matched to the frequency content of cardiac signals. We selected component values from lab stock, simulated every stage in LTspice, and verified each one with the oscilloscope\'s frequency response analysis before connecting them.',
+      'Testing guided the final design. The first notch filter centered too far from 60 Hz, so we raised its feedback resistor from 1.5 kΩ to 2 kΩ, which moved the notch to 60.3 Hz (0.5% error). The measured bandpass cutoffs of 0.45 Hz and 172 Hz both fell within published ranges for ECG instrumentation. The integrated circuit displayed a clear waveform with distinct P, QRS, and T features.',
+      'As an extension, we added a DC offset stage (an inverting summing amplifier followed by an inverting amplifier) that shifts the signal up 0.8 V so it stays within the Arduino\'s 0 to 5 V input range. A MATLAB script sampled the Arduino at 500 Hz, detected R-peaks using a voltage threshold with a minimum spacing between beats to avoid double counting, calculated heart rate from the R-R intervals, and classified it as bradycardic, normal, or tachycardic. In one 10-second recording it found an average R-R interval of 0.627 s, a heart rate of 95.7 BPM, classified as normal.',
+      'Next steps would be moving the circuit from a breadboard to a printed circuit board with an enclosure, and using tighter-tolerance components and shorter connections to reduce error further.',
     ],
     facts: [
-      { label: 'Institution', value: 'Purdue University' },
-      { label: 'Tools', value: 'Arduino, MATLAB, op-amps, RC filters' },
+      { label: 'Course', value: 'BME 23101, Bioinstrumentation & Circuit Theory Lab, Purdue' },
+      { label: 'Team', value: 'Shreyas Ghare and Adam White' },
+      { label: 'Tools', value: 'LTspice, Arduino Uno R4 WiFi, MATLAB, oscilloscope frequency response analysis' },
+      { label: 'Results', value: 'Notch at 60.3 Hz; passband 0.45 to 172 Hz; heart rate detected at 95.7 BPM' },
+    ],
+    pipeline: {
+      title: 'Signal chain',
+      steps: [
+        { label: 'Electrodes', detail: 'Lead II, limb leads' },
+        { label: 'Instrumentation amp', detail: 'Gain 95' },
+        { label: 'Non-inverting amp', detail: 'Gain 10' },
+        { label: 'Notch filter', detail: 'Removes 60 Hz' },
+        { label: 'Bandpass filter', detail: '0.5 to 150 Hz' },
+        { label: 'DC offset', detail: '+0.8 V' },
+        { label: 'Arduino', detail: 'Samples at 500 Hz' },
+        { label: 'MATLAB', detail: 'Beats and heart rate' },
+      ],
+    },
+    images: [
+      {
+        src: '/projects/arduino-matlab-ecg/full-circuit.webp',
+        width: 1800,
+        height: 839,
+        alt: 'Breadboard ECG circuit with op-amp stages, connected to an Arduino Uno R4 WiFi and electrode leads',
+        caption: 'The fully integrated circuit. Electrode leads enter through the audio jack on the left, pass through the amplifier and filter stages, and feed the Arduino on the right.',
+        wide: true,
+      },
+      {
+        src: '/projects/arduino-matlab-ecg/ecg-trace.webp',
+        width: 899,
+        height: 563,
+        alt: 'Oscilloscope trace of a human ECG with the P, Q, R, S, and T points labeled',
+        caption: 'ECG recorded from a human subject on the oscilloscope, with the P wave, QRS complex, and T wave labeled.',
+      },
+      {
+        src: '/projects/arduino-matlab-ecg/notch-filter-response.webp',
+        width: 1170,
+        height: 705,
+        alt: 'Plot of gain versus frequency showing a sharp dip at 60 Hz',
+        caption: 'Measured frequency response of the notch filter, cutting power-line noise at 60 Hz while passing the rest of the band.',
+      },
+      {
+        src: '/projects/arduino-matlab-ecg/heartbeat-detection.webp',
+        width: 873,
+        height: 583,
+        alt: 'MATLAB plot of a 10-second ECG with detected heartbeats marked above a 1.4 V threshold',
+        caption: 'MATLAB heartbeat detection on the Arduino\'s samples. Each marker is a detected R-peak above the 1.4 V threshold, giving a heart rate of 95.7 BPM.',
+        wide: true,
+      },
     ],
   },
   {
