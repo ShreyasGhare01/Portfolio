@@ -27,8 +27,19 @@ export type Project = {
   pipeline?: { title: string; steps: { label: string; detail?: string }[] };
   acknowledgment?: string; // shown at the end of the description
   // `wide: true` spans the full gallery width. Add `video` (an .mp4 path) to show
-  // a silent looping clip, with `src` as its poster frame.
-  images?: { src: string; alt: string; caption?: string; wide?: boolean; width?: number; height?: number; video?: string }[];
+  // a silent looping clip, or `model` (a .glb path) for an interactive 3D viewer;
+  // either way `src` is the poster image shown first. `ratio` sets a viewer's shape.
+  images?: {
+    src: string;
+    alt: string;
+    caption?: string;
+    wide?: boolean;
+    width?: number;
+    height?: number;
+    video?: string;
+    model?: string;
+    ratio?: string;
+  }[];
   featured?: boolean;
 };
 
@@ -130,7 +141,7 @@ export const projects: Project[] = [
     description: [
       'As part of the Small Projects subteam of Purdue\'s chapter of the American Society of Mechanical Engineers (ASME), my team designed and built a turret to launch foam golf balls at targets. The competition has three rounds. The accuracy round sets 10 cup-stack targets between 5 and 20 feet away and 3 to 8 feet high, with 20 balls to hit them. The time-attack round gives 3 minutes and unlimited balls, and the turret has to pivot between targets because hitting the same one twice in a row scores nothing. The range round is three attempts to launch a single ball as far as possible. The turret had to stay under 3 feet tall, keep launch speed under 45 m/s, and be operable with one hand.',
       'We chose a dual-flywheel launcher for stable, repeatable shots. Two spinning wheels grip each ball and fire it through a 1.75-inch PVC barrel. Balls drop from a funnel hopper into the firing chamber, and a spiral hopper above it stores ammunition for the timed round while feeding balls one at a time so they don\'t jam.',
-      'To aim, the whole launcher sits on a lazy susan bearing. A motor turns it through a 3D-printed gear, giving the turret 180 degrees of rotation, and the design adds about 30 degrees of tilt for adjusting launch angle. Holding power to the motor locks the turret in place between shots. After presenting our preliminary design review, we built and tested the rotating base: the 3D-printed tower spins on its geared turntable, driven by the motor and controlled from a handheld radio controller.',
+      'To aim, the whole launcher sits on a lazy susan bearing. A motor turns it through a 3D-printed gear, giving the turret 180 degrees of rotation, and the design adds about 30 degrees of tilt for adjusting launch angle. Holding power to the motor locks the turret in place between shots. We modeled the complete turret in Fusion 360. After presenting our preliminary design review, we built and tested the rotating base: the 3D-printed tower spins on its geared turntable, driven by the motor and controlled from a handheld radio controller.',
       'My main role was the electronics: I wired the control circuit and programmed the Arduino that drives the turret\'s motor. I also helped design parts in CAD and 3D print the turret\'s components.',
     ],
     facts: [
@@ -138,6 +149,7 @@ export const projects: Project[] = [
       { label: 'Team', value: 'Team project' },
       { label: 'My role', value: 'Electronics and Arduino programming; helped design the CAD and 3D print components' },
       { label: 'Constraints', value: 'Under 3 ft tall, launch speed under 45 m/s, one-handed operation' },
+      { label: 'Tools', value: 'Fusion 360, Arduino, 3D printing' },
       { label: 'Key parts', value: 'Dual flywheels, 1.75 in PVC barrel, spiral hopper, lazy susan bearing, 3D-printed gear and funnel' },
     ],
     pipeline: {
@@ -155,6 +167,14 @@ export const projects: Project[] = [
     },
     images: [
       {
+        src: '/projects/asme-turret/turret-assembly-poster.webp',
+        model: '/projects/asme-turret/turret-assembly.glb',
+        ratio: '16 / 10',
+        alt: 'Interactive 3D model of the full turret assembly in Fusion 360',
+        caption: 'Interactive model of the full turret assembly. Drag to rotate and scroll to zoom. From the bottom up: the turntable base, the motor tower, the barrel holder with its flywheels, and the curved feed tube that brings balls down to the barrel. Simplified for the web from the Fusion 360 model.',
+        wide: true,
+      },
+      {
         src: '/projects/asme-turret/turret-rotation-poster.webp',
         video: '/projects/asme-turret/turret-rotation.mp4',
         width: 480,
@@ -163,11 +183,11 @@ export const projects: Project[] = [
         caption: 'Rotation test of the built turret base. The 3D-printed tower spins on its geared turntable, driven by the Arduino-controlled motor and steered from a handheld radio controller.',
       },
       {
-        src: '/projects/asme-turret/spiral-hopper-sketch.webp',
-        width: 654,
-        height: 902,
-        alt: 'Sketch of a spiral ramp wrapped around a central column, with balls rolling down to an outlet at the bottom',
-        caption: 'Spiral hopper concept. Balls roll down a ramp wrapped around a central column and leave one at a time, storing ammunition for the timed round without jamming.',
+        src: '/projects/asme-turret/turret-holder-poster.webp',
+        model: '/projects/asme-turret/turret-holder.glb',
+        ratio: '1 / 1',
+        alt: 'Interactive 3D model of the turret holder head',
+        caption: 'The turret holder head, which cradles the launcher barrel at the top of the turret. Drag to rotate.',
       },
       {
         src: '/projects/asme-turret/feed-mechanism-sketch.webp',
@@ -176,6 +196,13 @@ export const projects: Project[] = [
         alt: 'Sketch of a funnel dropping a ball against a backboard onto a track lined with pairs of spinning wheels',
         caption: 'Early launcher concept. A funnel drops each ball against a backboard, then pairs of spinning wheels accelerate it down a track. The final design narrowed this to a single pair of flywheels.',
         wide: true,
+      },
+      {
+        src: '/projects/asme-turret/spiral-hopper-sketch.webp',
+        width: 654,
+        height: 902,
+        alt: 'Sketch of a spiral ramp wrapped around a central column, with balls rolling down to an outlet at the bottom',
+        caption: 'Spiral hopper concept. Balls roll down a ramp wrapped around a central column and leave one at a time, storing ammunition for the timed round without jamming.',
       },
       {
         src: '/projects/asme-turret/turntable-base-sketch.webp',

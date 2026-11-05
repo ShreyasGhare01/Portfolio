@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Icon from '../../components/Icon.astro';
+import ModelViewer from '../../components/ModelViewer.astro';
 import { projects, categories, type Project } from '../../data/projects';
 
 export function getStaticPaths() {
@@ -100,7 +101,9 @@ const category = categories[project.category];
             <div class="gallery">
               {project.images.map((img, i) => (
                 <figure class:list={['gallery__item', { 'gallery__item--wide': img.wide }]}>
-                  {img.video ? (
+                  {img.model ? (
+                    <ModelViewer src={img.model} poster={img.src} alt={img.alt} ratio={img.ratio} />
+                  ) : img.video ? (
                     <video
                       class="gallery__video"
                       src={img.video}
