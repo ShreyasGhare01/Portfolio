@@ -184,13 +184,6 @@ export const projects: Project[] = [
         alt: 'Sketch of a square base plate with a circular turntable and a mounting platform held by two brackets',
         caption: 'Base and aiming concept: a turntable bearing set into the base plate, with brackets holding the launcher platform so it can tilt.',
       },
-      {
-        src: '/projects/asme-turret/funnel-barrel-cad.webp',
-        width: 1254,
-        height: 930,
-        alt: 'CAD render of a funnel feeding into a cylindrical barrel',
-        caption: 'CAD model of the 3D-printed funnel feeding into the barrel.',
-      },
     ],
   },
   {
