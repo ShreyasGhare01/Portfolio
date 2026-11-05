@@ -123,7 +123,7 @@ export const projects: Project[] = [
     short: 'Histogram Hand',
     tags: ['Programming', 'Biomedical'],
     category: 'college',
-    dates: 'Spring 2025',
+    dates: 'Fall 2024',
     summary:
       'A Python program that models a human hand as a live histogram, one bar per finger, and plays a piano note when a finger presses past its natural reach. Built with Tkinter, Matplotlib, and an embedded tutorial video.',
     description: [
