@@ -10,7 +10,7 @@
 // projects that share a tag get connected.
 // ─────────────────────────────────────────────────────────────
 
-export type Category = 'college' | 'research' | 'personal';
+export type Category = 'college' | 'lab' | 'personal' | 'research';
 
 export type Project = {
   slug: string;
@@ -43,20 +43,33 @@ export type Project = {
   featured?: boolean;
 };
 
-export const categories: Record<Category, { name: string; blurb: string }> = {
+// `webLabel` is how the category reads inside its bubble in the project web
+// (keep each line short so it fits).
+export const categories: Record<Category, { name: string; blurb: string; webLabel: string[] }> = {
   college: {
     name: 'College',
-    blurb: 'Projects completed at Purdue University as a Biomedical Engineering student.',
+    blurb: 'Projects completed at Purdue University as a Biomedical Engineering student, in courses and engineering clubs.',
+    webLabel: ['COLLEGE'],
+  },
+  lab: {
+    name: 'Undergraduate Research',
+    blurb: 'Research in university laboratories as an undergraduate, including summer research at the University of Louisville.',
+    webLabel: ['UNDERGRAD', 'RESEARCH'],
+  },
+  personal: {
+    name: 'Personal',
+    blurb: 'Projects built on my own time, outside of coursework and lab work.',
+    webLabel: ['PERSONAL'],
   },
   research: {
     name: 'Earlier Research',
     blurb: 'Independent research from middle and high school, including state and national award-winning work.',
-  },
-  personal: {
-    name: 'Personal',
-    blurb: 'Projects built outside of coursework and lab work.',
+    webLabel: ['EARLIER', 'RESEARCH'],
   },
 };
+
+// Order of the tabs on the Projects page and the bubbles in the project web.
+export const categoryOrder: Category[] = ['college', 'lab', 'personal', 'research'];
 
 export const projects: Project[] = [
   // ── College ───────────────────────────────────────────────
@@ -311,7 +324,6 @@ export const projects: Project[] = [
     ],
   },
 
-  // ── Earlier research ──────────────────────────────────────
   {
     slug: 'python-hand-histogram',
     title: 'Histogram Hand: Finger Motion and Piano Notes in Python',
@@ -386,6 +398,49 @@ export const projects: Project[] = [
       },
     ],
   },
+  // ── Undergraduate research ────────────────────────────────
+  {
+    slug: 'heart-lab-surgical-instrument-robot',
+    title: 'Robotic Surgical Instrument Identification and Handling',
+    short: 'Surgical Robot',
+    tags: ['Robotics', 'Biomedical', 'Programming'],
+    category: 'lab',
+    dates: 'Summer 2026',
+    summary:
+      'Summer research in the HeaRT Lab at the University of Louisville: a robotic module that recognizes surgical instruments with machine learning, then picks one up and unlatches its casing.',
+    description: [
+      'Over the summer of 2026, I worked as an undergraduate researcher in Dr. Yash Chitalia\'s HeaRT Laboratory at the University of Louisville, which develops robotic systems for medicine.',
+      'I developed a robotic module that identifies surgical instruments using a machine learning model. Once an instrument is identified, a lead screw motor mechanism I designed picks up the selected instrument and unlatches its device casing. I also engineered a custom vacuum pickup tool so the robot could handle instruments precisely and securely.',
+    ],
+    facts: [
+      { label: 'Lab', value: 'HeaRT Laboratory, Dr. Yash Chitalia' },
+      { label: 'Institution', value: 'University of Louisville, Shumaker Research Building' },
+      { label: 'Focus', value: 'Machine learning identification, lead screw mechanism, vacuum pickup tool' },
+    ],
+    links: [{ label: 'Visit the HeaRT Lab', href: 'https://www.heart-lab.io/' }],
+  },
+  {
+    slug: 'cavopulmonary-assist-device',
+    title: 'Cavopulmonary Assist Device for Fontan Failure',
+    short: 'Fontan Assist Device',
+    tags: ['Biomedical', 'Design'],
+    category: 'lab',
+    dates: 'Summer 2026',
+    summary:
+      'Summer research in the Biomedical Devices Lab at the University of Louisville: designing and testing impellers for a blood pump that supports patients living with a single-ventricle heart.',
+    description: [
+      'Over the summer of 2026, I worked as an undergraduate researcher in Dr. Guruprasad Giridharan\'s Biomedical Devices Laboratory at the University of Louisville.',
+      'Patients born with a single functioning ventricle are treated with the Fontan procedure, which routes blood from the body directly to the lungs without a pumping chamber. Over time this circulation can fail. The lab is developing a novel, non-obstructive cavopulmonary assist device (CPAD) that adds pumping power to that pathway, aiming to reverse the "Fontan paradox."',
+      'I designed and tested multiple novel impeller configurations to optimize the device\'s performance, and ran hemolysis comparisons against clinically approved blood pumps to evaluate how gently each design treats red blood cells, a key measure of biocompatibility and safety.',
+    ],
+    facts: [
+      { label: 'Lab', value: 'Biomedical Devices Laboratory, Dr. Guruprasad Giridharan' },
+      { label: 'Institution', value: 'University of Louisville, Shumaker Research Building' },
+      { label: 'Focus', value: 'Impeller design and testing, hemolysis comparison' },
+    ],
+  },
+
+  // ── Earlier research ──────────────────────────────────────
   {
     slug: 'aldose-reductase-brain-inflammation',
     title: 'Pathogenic Role of Aldose Reductase in Brain Inflammation',

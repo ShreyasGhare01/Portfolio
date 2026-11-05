@@ -6,7 +6,7 @@
 // The layout is computed here at build time from projects.ts,
 // so adding a project re-arranges the web automatically.
 // ─────────────────────────────────────────────────────────────
-import { projects, categories, type Category } from '../data/projects';
+import { projects, categories, categoryOrder, type Category } from '../data/projects';
 
 const W = 1000;
 const H = 620;
@@ -21,12 +21,13 @@ const R_PROJ = 15;
 
 const colors: Record<Category, string> = {
   college: '#83EAC5',
-  research: '#7FB0F2',
+  lab: '#F7A98B',
   personal: '#FFD66B',
+  research: '#7FB0F2',
 };
 
-const order: Category[] = ['college', 'research', 'personal'];
-const groups = order
+// Empty categories are left out of the web until they have projects.
+const groups = categoryOrder
   .map((key) => ({ key, items: projects.filter((p) => p.category === key) }))
   .filter((g) => g.items.length > 0);
 
@@ -61,7 +62,7 @@ for (const g of groups) {
   const angles = g.items.map((_, i) => offset + (slot + i) * step);
   const mid = (angles[0] + angles[angles.length - 1]) / 2;
   const name = categories[g.key].name;
-  catNodes.push({ key: g.key, name, color: colors[g.key], pt: onRing(mid, ring1), lines: name.toUpperCase().split(' ') });
+  catNodes.push({ key: g.key, name, color: colors[g.key], pt: onRing(mid, ring1), lines: categories[g.key].webLabel });
 
   g.items.forEach((p, i) => {
     const pt = onRing(angles[i], ring2);
