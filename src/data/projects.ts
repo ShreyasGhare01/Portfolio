@@ -118,6 +118,105 @@ export const projects: Project[] = [
     ],
   },
   {
+    slug: 'pip-joint-implant',
+    title: 'PIP Finger Joint Implant: CAD Proof of Concept',
+    short: 'PIP Joint Implant',
+    tags: ['CAD', 'Biomedical', 'Design'],
+    category: 'college',
+    dates: 'Fall 2025',
+    featured: true,
+    summary:
+      'A team-designed, 3D-printable ball-and-socket implant for the finger\'s PIP joint, sized from hand anatomy, compression tested in PLA and TPU, and checked with finite element analysis up to 50 N.',
+    description: [
+      'Osteoarthritis is the most common form of arthritis and frequently affects the proximal interphalangeal (PIP) joint in the middle of the finger. Once the cartilage wears away, bone grinds on bone, and severe cases need a joint replacement that costs around $22,000. Current implants, most often silicone, can loosen, crack, or wear out over time, which can mean another surgery. Working in a team for our sophomore biomedical engineering lab, we set out to design a proof-of-concept PIP implant that could be 3D printed and customized to a patient.',
+      'I drew the anatomical sketches that grounded the design, mapping the phalanges and joints of the hand, the joint capsule and articular cartilage, and an early ball-and-socket concept. I then modeled the implant in CAD as two parts. The upper piece attaches to the middle phalanx and ends in a 5.5 mm radius ball. It stands 13 mm tall, under the average 16.1 mm length of that bone, and is 13 mm wide to match the bone\'s base. The lower piece attaches to the proximal phalanx and holds the socket, at 17 mm tall against an average bone length of 20.7 mm. Each part has a 1 mm radius hole for a surgical screw to fix it to the bone.',
+      'We compared PLA, TPU, aluminum, titanium, and ABS, and chose PLA and TPU for their low cost and printability. We compression tested five printed cylinders of each on an Instron universal testing machine. PLA was far stiffer, with a Young\'s modulus of 1.31 ± 0.08 GPa against 20.4 ± 1.4 MPa for TPU, a difference confirmed by a two-sample t-test (p = 4.4 × 10⁻⁶) that I ran. Two TPU samples sheared rather than compressing evenly and were excluded as outliers. In finite element analysis of the implant geometry, typical finger loads fall between 2 and 35 N. At 50 N the design held a minimum safety factor of 1.41 with under 0.1 mm of displacement, and stress concentrated around the screw hole.',
+      'The results showed that printed PLA is strong enough for prototype-level loads but much less stiff than bone (1.3 GPa against 10 to 30 GPa), so it suits a proof of concept rather than a final implant, while the more flexible TPU is a better match for cartilage-like regions. A ball-and-socket joint also allows more motion than a real PIP joint, which works like a hinge. Next steps would be a hinge-based geometry, a reinforced screw hole with larger fillets, fatigue and multi-axial load testing, medical-grade materials, and patient-specific designs built from medical imaging.',
+    ],
+    facts: [
+      { label: 'Course', value: 'Sophomore biomedical engineering lab, Purdue University' },
+      { label: 'Team', value: 'Four-person team' },
+      { label: 'My role', value: 'Anatomical sketches, CAD modeling and engineering drawings, statistical analysis, methods write-up' },
+      { label: 'Tools', value: 'CAD and FEA, Instron universal testing machine, Excel' },
+      { label: 'Results', value: 'Safety factor of 1.41 at 50 N; PLA modulus 1.31 GPa vs TPU 20.4 MPa (p < 0.001)' },
+    ],
+    pipeline: {
+      title: 'Design process',
+      steps: [
+        { label: 'Clinical need', detail: 'PIP osteoarthritis, implant failure' },
+        { label: 'Anatomical sketches', detail: 'Phalanx sizes, joint structure' },
+        { label: 'CAD model', detail: 'Two-part ball and socket' },
+        { label: 'Engineering drawings', detail: 'Dimensioned in mm' },
+        { label: 'Material selection', detail: 'PLA and TPU from five candidates' },
+        { label: 'Compression testing', detail: 'Five samples per material' },
+        { label: 'Statistics', detail: 'Two-sample t-test' },
+        { label: 'FEA', detail: 'Loads of 20, 30, and 50 N' },
+      ],
+    },
+    images: [
+      {
+        src: '/projects/pip-joint/anatomical-sketches.webp',
+        width: 756,
+        height: 599,
+        alt: 'Pencil sketches on graph paper of hand bones with labeled joints and phalanx lengths, a finger joint capsule, and a ball-and-socket concept',
+        caption: 'My anatomical sketches: the bones and joints of the hand with the average phalanx lengths used to size the implant, the joint capsule and articular cartilage, and the first ball-and-socket concept.',
+      },
+      {
+        src: '/projects/pip-joint/cad-assembly.webp',
+        width: 756,
+        height: 538,
+        alt: 'CAD renders of the ball component, the socket component, and the assembled implant',
+        caption: 'The CAD model: the ball component (left) attaches to the middle phalanx, the socket component (center) to the proximal phalanx, and together they form the assembled joint (right).',
+      },
+      {
+        src: '/projects/pip-joint/engineering-drawing.webp',
+        width: 1144,
+        height: 811,
+        alt: 'Dimensioned engineering drawing of the ball component with front, side, top, and isometric views',
+        caption: 'Engineering drawing of the ball component, with all dimensions in millimeters.',
+        wide: true,
+      },
+      {
+        src: '/projects/pip-joint/compression-curves.webp',
+        width: 1800,
+        height: 528,
+        alt: 'Two stress-strain charts from compression testing five PLA samples and five TPU samples',
+        caption: 'Compression testing of five printed cylinders per material. PLA (left) behaved consistently. In the TPU tests (right), the two curves that rise early came from samples that sheared rather than compressing evenly, and they were excluded as outliers.',
+        wide: true,
+      },
+      {
+        src: '/projects/pip-joint/fea-50n.webp',
+        width: 756,
+        height: 429,
+        alt: 'Three finite element analysis renders of the ball component under a downward load, colored by safety factor, stress, and displacement',
+        caption: 'Finite element analysis of the ball component under 50 N, above the 2 to 35 N a finger joint typically sees. Left to right: safety factor, von Mises stress, and displacement. The minimum safety factor stayed at 1.41, with stress concentrated around the screw hole.',
+        wide: true,
+      },
+    ],
+  },
+  {
+    slug: 'epics-speedway-wind-tunnel',
+    title: 'Purdue EPICS: SPEEDWAY Wind Tunnel',
+    short: 'Wind Tunnel',
+    tags: ['CAD', '3D Printing', 'Design'],
+    category: 'college',
+    dates: 'Fall 2024 – Spring 2025',
+    featured: true,
+    summary:
+      'A working wind tunnel designed and built for the Indianapolis Speed Museum to support STEM education outreach.',
+    description: [
+      "As part of Purdue's EPICS (Engineering Projects in Community Service) program, designed and assembled a fully functional wind tunnel for the Indianapolis Speed Museum to support STEM education outreach.",
+      'Used Fusion 360 for CAD modeling, 3D printing for component fabrication, and hands-on prototyping for assembly. The project emphasized teamwork, engineering communication, and iterative design while delivering a real-world educational exhibit.',
+    ],
+    facts: [
+      { label: 'Institution', value: 'Purdue University, EPICS Program' },
+      { label: 'Partner', value: 'Indianapolis Speed Museum' },
+      { label: 'Tools', value: 'Fusion 360, 3D printing, prototyping' },
+    ],
+  },
+
+  // ── Earlier research ──────────────────────────────────────
+  {
     slug: 'python-hand-histogram',
     title: 'Histogram Hand: Finger Motion and Piano Notes in Python',
     short: 'Histogram Hand',
@@ -191,28 +290,6 @@ export const projects: Project[] = [
       },
     ],
   },
-  {
-    slug: 'epics-speedway-wind-tunnel',
-    title: 'Purdue EPICS: SPEEDWAY Wind Tunnel',
-    short: 'Wind Tunnel',
-    tags: ['CAD', '3D Printing', 'Design'],
-    category: 'college',
-    dates: 'Fall 2024 – Spring 2025',
-    featured: true,
-    summary:
-      'A working wind tunnel designed and built for the Indianapolis Speed Museum to support STEM education outreach.',
-    description: [
-      "As part of Purdue's EPICS (Engineering Projects in Community Service) program, designed and assembled a fully functional wind tunnel for the Indianapolis Speed Museum to support STEM education outreach.",
-      'Used Fusion 360 for CAD modeling, 3D printing for component fabrication, and hands-on prototyping for assembly. The project emphasized teamwork, engineering communication, and iterative design while delivering a real-world educational exhibit.',
-    ],
-    facts: [
-      { label: 'Institution', value: 'Purdue University, EPICS Program' },
-      { label: 'Partner', value: 'Indianapolis Speed Museum' },
-      { label: 'Tools', value: 'Fusion 360, 3D printing, prototyping' },
-    ],
-  },
-
-  // ── Earlier research ──────────────────────────────────────
   {
     slug: 'aldose-reductase-brain-inflammation',
     title: 'Pathogenic Role of Aldose Reductase in Brain Inflammation',
@@ -308,7 +385,6 @@ export const projects: Project[] = [
     tags: ['Energy', 'Electronics', 'Physics'],
     category: 'research',
     dates: '2021 – 2022',
-    featured: true,
     summary:
       'Tested whether a temperature difference across a Peltier chip can generate usable electrical energy through the Seebeck effect.',
     description: [
