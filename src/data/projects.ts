@@ -122,7 +122,7 @@ export const projects: Project[] = [
     slug: 'asme-competition-turret',
     title: 'Foam Ball Launching Turret: ASME Small Projects',
     short: 'ASME Turret',
-    tags: ['Robotics', 'CAD', '3D Printing'],
+    tags: ['Robotics', 'Electronics', 'CAD', '3D Printing'],
     category: 'college',
     dates: 'Spring 2026',
     summary:
@@ -131,10 +131,12 @@ export const projects: Project[] = [
       'As part of the Small Projects subteam of Purdue\'s chapter of the American Society of Mechanical Engineers (ASME), my team designed and built a turret to launch foam golf balls at targets. The competition has three rounds. The accuracy round sets 10 cup-stack targets between 5 and 20 feet away and 3 to 8 feet high, with 20 balls to hit them. The time-attack round gives 3 minutes and unlimited balls, and the turret has to pivot between targets because hitting the same one twice in a row scores nothing. The range round is three attempts to launch a single ball as far as possible. The turret had to stay under 3 feet tall, keep launch speed under 45 m/s, and be operable with one hand.',
       'We chose a dual-flywheel launcher for stable, repeatable shots. Two spinning wheels grip each ball and fire it through a 1.75-inch PVC barrel. Balls drop from a funnel hopper into the firing chamber, and a spiral hopper above it stores ammunition for the timed round while feeding balls one at a time so they don\'t jam.',
       'To aim, the whole launcher sits on a lazy susan bearing. A motor turns it through a 3D-printed gear, giving the turret 180 degrees of rotation, and the design adds about 30 degrees of tilt for adjusting launch angle. Holding power to the motor locks the turret in place between shots. After presenting our preliminary design review, we built and tested the rotating base: the 3D-printed tower spins on its geared turntable, driven by the motor and controlled from a handheld radio controller.',
+      'My main role was the electronics: I wired the control circuit and programmed the Arduino that drives the turret\'s motor. I also helped design parts in CAD and 3D print the turret\'s components.',
     ],
     facts: [
       { label: 'Organization', value: 'ASME at Purdue, Small Projects subteam' },
       { label: 'Team', value: 'Team project' },
+      { label: 'My role', value: 'Electronics and Arduino programming; helped design the CAD and 3D print components' },
       { label: 'Constraints', value: 'Under 3 ft tall, launch speed under 45 m/s, one-handed operation' },
       { label: 'Key parts', value: 'Dual flywheels, 1.75 in PVC barrel, spiral hopper, lazy susan bearing, 3D-printed gear and funnel' },
     ],
@@ -158,7 +160,7 @@ export const projects: Project[] = [
         width: 480,
         height: 848,
         alt: 'Video of the 3D-printed turret rotating on its geared turntable base, controlled with a handheld radio controller',
-        caption: 'Rotation test of the built turret base. The 3D-printed tower spins on its geared turntable, controlled from a handheld radio controller.',
+        caption: 'Rotation test of the built turret base. The 3D-printed tower spins on its geared turntable, driven by the Arduino-controlled motor and steered from a handheld radio controller.',
       },
       {
         src: '/projects/asme-turret/spiral-hopper-sketch.webp',
