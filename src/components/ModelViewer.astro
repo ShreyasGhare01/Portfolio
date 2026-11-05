@@ -14,12 +14,19 @@ interface Props {
 const { src, poster, alt, ratio = '1 / 1' } = Astro.props;
 ---
 
-<div class="model" data-src={src} style={`aspect-ratio: ${ratio}`} role="img" aria-label={alt}>
-  <img class="model__poster" src={poster} alt="" loading="lazy" decoding="async" />
-  <span class="model__status" aria-live="polite">Loading 3D model…</span>
-  <span class="model__badge">3D</span>
-  <span class="model__hint">Drag to rotate · Scroll to zoom</span>
-  <button class="model__reset" type="button">Reset view</button>
+<div class="model-wrap">
+  <div class="model" data-src={src} style={`aspect-ratio: ${ratio}`} role="img" aria-label={alt}>
+    <img class="model__poster" src={poster} alt="" loading="lazy" decoding="async" />
+    <span class="model__status" aria-live="polite">Loading 3D model…</span>
+    <span class="model__badge">3D</span>
+  </div>
+  <div class="model__bar">
+    <span class="model__hint">
+      <span class="model__hint-mouse">Drag to rotate · Scroll to zoom</span>
+      <span class="model__hint-touch">Drag to rotate · Pinch to zoom</span>
+    </span>
+    <button class="model__reset" type="button" disabled>Reset view</button>
+  </div>
 </div>
 
 <style>
@@ -31,7 +38,6 @@ const { src, poster, alt, ratio = '1 / 1' } = Astro.props;
     background: #fbfbf9;
     overflow: hidden;
     touch-action: none;
-    container-type: inline-size;
   }
   .model :global(canvas) {
     position: absolute;
@@ -55,82 +61,89 @@ const { src, poster, alt, ratio = '1 / 1' } = Astro.props;
   }
   .model.is-ready .model__poster {
     opacity: 0;
-    pointer-events: none;
   }
-  .model__status {
+  /* Labels sit above the canvas but never block dragging */
+  .model__status,
+  .model__badge {
     position: absolute;
-    left: 12px;
-    bottom: 12px;
+    z-index: 1;
+    pointer-events: none;
     font-size: 11.5px;
     background: var(--paper);
     border: 1px solid var(--ink);
+  }
+  .model__status {
+    left: 12px;
+    bottom: 12px;
     padding: 3px 9px;
   }
-  .model.is-ready .model__status {
-    display: none;
-  }
-  .model.is-error .model__status {
-    display: none;
-  }
   .model__badge {
-    position: absolute;
     top: 10px;
     left: 10px;
     font-size: 11px;
     font-weight: 800;
     letter-spacing: 0.08em;
     background: var(--mint);
-    border: 1px solid var(--ink);
     padding: 2px 8px;
   }
+  .model.is-ready .model__status,
+  .model.is-error .model__status,
   .model.is-error .model__badge {
     display: none;
   }
-  .model__hint,
-  .model__reset {
-    position: absolute;
-    bottom: 10px;
+
+  /* Control bar below the viewer */
+  .model__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 0 0;
     font-size: 11.5px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
   }
   .model__hint {
-    left: 12px;
     color: var(--muted);
-    pointer-events: none;
+  }
+  .model__hint-touch {
+    display: none;
+  }
+  @media (hover: none) {
+    .model__hint-mouse {
+      display: none;
+    }
+    .model__hint-touch {
+      display: inline;
+    }
   }
   .model__reset {
-    right: 10px;
     font: inherit;
     font-size: 11.5px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     background: var(--paper);
+    color: var(--ink);
     border: 1px solid var(--ink);
     border-radius: 999px;
-    padding: 4px 12px;
+    padding: 5px 14px;
     cursor: pointer;
+    flex: none;
+    transition: background 0.15s ease;
   }
-  .model.is-ready .model__hint,
-  .model.is-ready .model__reset {
-    opacity: 1;
+  .model__reset:hover:not(:disabled) {
+    background: var(--mint);
+  }
+  .model__reset:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+  .model-wrap:has(.model.is-error) .model__bar {
+    display: none;
   }
   /* Tall models read better in a square frame on phones */
   @media (max-width: 760px) {
     .model {
       aspect-ratio: 1 / 1 !important;
-    }
-  }
-  @media (hover: none) {
-    .model__hint {
-      display: none;
-    }
-  }
-  /* Not enough room for both the hint and the reset button */
-  @container (max-width: 600px) {
-    .model__hint {
-      display: none;
     }
   }
 </style>
@@ -224,10 +237,14 @@ const { src, poster, alt, ratio = '1 / 1' } = Astro.props;
       controls.saveState();
       controls.addEventListener('start', () => (controls.autoRotate = false));
 
-      el.querySelector('.model__reset')?.addEventListener('click', () => {
-        controls.reset();
-        controls.autoRotate = true;
-      });
+      const resetBtn = el.parentElement?.querySelector<HTMLButtonElement>('.model__reset');
+      if (resetBtn) {
+        resetBtn.disabled = false;
+        resetBtn.addEventListener('click', () => {
+          controls.reset();
+          controls.autoRotate = true;
+        });
+      }
 
       const resize = () => {
         const w = el.clientWidth;
