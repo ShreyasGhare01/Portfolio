@@ -25,6 +25,7 @@ export type Project = {
   links?: { label: string; href: string }[];
   // Optional step-by-step flow drawn as a diagram on the project page
   pipeline?: { title: string; steps: { label: string; detail?: string }[] };
+  acknowledgment?: string; // shown at the end of the description
   // `wide: true` makes an image span the full gallery width
   images?: { src: string; alt: string; caption?: string; wide?: boolean; width?: number; height?: number }[];
   featured?: boolean;
@@ -144,24 +145,28 @@ export const projects: Project[] = [
     short: 'Aldose Reductase',
     tags: ['Cell Biology', 'Neuroscience', 'Biomedical'],
     category: 'research',
-    dates: '2022 – 2023',
+    dates: '2022 – 2024',
     featured: true,
     summary:
-      'Tested whether blocking the enzyme aldose reductase with the drug epalrestat protects brain immune cells from bacterial-toxin-induced inflammation. It did, across cell survival, cytokines, and oxidative stress.',
+      'Gut-brain axis research at the University of Louisville: tested whether blocking the enzyme aldose reductase with epalrestat protects brain immune cells from inflammation caused by the bacterial toxin LPS. It did, across cell survival, cytokines, and oxidative stress.',
     description: [
       'Microglia are the brain\'s resident immune cells. When they detect lipopolysaccharide (LPS), a toxin from the outer membrane of bacteria, they become activated and release inflammatory cytokines. Sustained microglia-driven inflammation is a risk factor for Alzheimer\'s, Parkinson\'s, and multiple sclerosis. Aldose reductase (AR), an enzyme in the polyol pathway, is best known for its role in diabetic complications, and growing evidence links it to inflammation, but its role in microglia activation was unclear.',
+      'The project was part of the Barve Lab\'s broader research on the gut-brain axis and alcohol. Alcohol use and an imbalanced gut microbiome can release bacterial products like LPS into circulation, where they can drive inflammation that reaches the brain, and alcohol has been shown to raise AR levels in the liver. Over two years in the lab, I led this study from experimental design through the written research paper.',
       'This project tested whether epalrestat (EPAL), an AR inhibitor already used to treat diabetic neuropathy, could suppress LPS-induced inflammation when given as a pretreatment. I cultured BV2 mouse microglia and treated them with two LPS doses (10 and 100 ng/mL), EPAL alone (50 µM), and EPAL combined with each LPS dose, alongside untreated controls, with every condition run in triplicate.',
       'I measured cell survival with an MTT assay and isolated RNA for qRT-PCR to track inflammatory cytokine genes (TNF-α and IL-1β). Cytokine protein levels, NF-κB p65 activation by Western blot, and immunofluorescence imaging of oxidative stress markers rounded out the analysis. I tested significance with t-tests and ANOVA in GraphPad Prism (p < 0.05).',
       'LPS reduced cell viability to about 70% of untreated cells, and EPAL pretreatment brought it back above 80%. LPS raised inflammatory cytokines at both the gene and protein level, and EPAL lowered them. In cells given the higher LPS dose, IL-6 dropped by roughly 80%. EPAL also reduced the oxidative stress markers acrolein, NLRP3, COX-2, and iNOS, and limited phosphorylation of p65, the subunit that switches on NF-κB, the transcription factor behind TNF-α, IL-1β, and IL-6 production.',
       'Together, the results point to aldose reductase as a key mediator of LPS-induced microglia activation, and suggest AR inhibitors like epalrestat have therapeutic potential against neuroinflammation. Natural next steps are confirming the effect in other microglia models and testing other inflammatory triggers such as HNE and HMGB-1. The work earned the Outstanding Achievement Award for Ability and Creativity in In Vitro Biology from the Society for In Vitro Biology, along with membership in the SIVB.',
     ],
     facts: [
-      { label: 'Institution', value: "University of Louisville, Dr. Shirish Barve's Lab" },
+      { label: 'Institution', value: 'University of Louisville, Clinical and Translational Research Building' },
+      { label: 'Lab', value: "Dr. Shirish Barve's Lab" },
       { label: 'Model', value: 'BV2 mouse microglia cell line' },
       { label: 'Techniques', value: 'Cell culture, MTT assay, RNA extraction, qRT-PCR, Western blot, immunofluorescence' },
       { label: 'Analysis', value: 'GraphPad Prism (t-tests, ANOVA)' },
       { label: 'Recognition', value: 'Outstanding Achievement Award in In Vitro Biology, SIVB (2023)' },
     ],
+    acknowledgment:
+      'Thank you to Dr. Shirish Barve and Dr. Craig McClain at the University of Louisville for hosting this research in their lab, and to Dr. Paula Chilton and Dr. Sreelatha Reddy for teaching me the experimental procedures.',
     pipeline: {
       title: 'Experimental workflow',
       steps: [
@@ -220,25 +225,6 @@ export const projects: Project[] = [
         caption: 'Immunofluorescence of microglia given 100 ng/mL LPS (left) versus LPS with EPAL pretreatment (right). Green marks acrolein and purple marks NLRP3, both oxidative stress markers; red marks CD45. The bright stress signal seen with LPS is reduced with EPAL.',
         wide: true,
       },
-    ],
-  },
-  {
-    slug: 'gut-brain-alcohol-research',
-    title: 'Brain Inflammation & the Gut-Brain Axis',
-    short: 'Gut-Brain Axis',
-    tags: ['Cell Biology', 'Neuroscience'],
-    category: 'research',
-    dates: '2022 – 2024',
-    summary:
-      'Independent research on how alcohol disrupts inflammatory pathways connecting the gut and the central nervous system.',
-    description: [
-      'Conducted independent research at the University of Louisville under Dr. Shirish Barve exploring the relationship between alcohol consumption, gut health, and brain inflammation, as part of a larger study by the lab.',
-      'Led the project from experimentation through the written paper, using Western Blot, PCR, and biochemical assays after completing biosafety and hazardous chemical training.',
-    ],
-    facts: [
-      { label: 'Institution', value: 'University of Louisville, Clinical and Translational Research Building' },
-      { label: 'Supervisor', value: 'Dr. Shirish Barve' },
-      { label: 'Techniques', value: 'Western Blot, PCR, biochemical assays' },
     ],
   },
   {

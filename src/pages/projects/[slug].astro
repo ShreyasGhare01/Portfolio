@@ -65,6 +65,14 @@ const category = categories[project.category];
             )
           }
 
+          {
+            project.acknowledgment && (
+              <p class="project__ack">
+                <span class="project__ack-label">Acknowledgments</span>
+                {project.acknowledgment}
+              </p>
+            )
+          }
         </div>
       </div>
 
@@ -196,6 +204,23 @@ const category = categories[project.category];
   }
   .project__body .btn-row {
     margin-top: 8px;
+  }
+  .project__ack {
+    margin: 28px 0 0;
+    padding-top: 16px;
+    border-top: 1px dashed #c9c9c6;
+    font-size: var(--step--1);
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .project__ack-label {
+    display: block;
+    font-weight: 800;
+    color: var(--ink);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 11.5px;
+    margin-bottom: 4px;
   }
   .block-title {
     font-size: var(--step-1);
