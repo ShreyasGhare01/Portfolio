@@ -100,9 +100,26 @@ const category = categories[project.category];
             <div class="gallery">
               {project.images.map((img, i) => (
                 <figure class:list={['gallery__item', { 'gallery__item--wide': img.wide }]}>
-                  <button class="gallery__open" type="button" data-index={i} aria-label={`Enlarge: ${img.alt}`}>
-                    <img src={img.src} alt={img.alt} width={img.width} height={img.height} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" />
-                  </button>
+                  {img.video ? (
+                    <video
+                      class="gallery__video"
+                      src={img.video}
+                      poster={img.src}
+                      width={img.width}
+                      height={img.height}
+                      aria-label={img.alt}
+                      autoplay
+                      muted
+                      loop
+                      playsinline
+                      controls
+                      preload="metadata"
+                    />
+                  ) : (
+                    <button class="gallery__open" type="button" data-index={i} aria-label={`Enlarge: ${img.alt}`}>
+                      <img src={img.src} alt={img.alt} width={img.width} height={img.height} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" />
+                    </button>
+                  )}
                   {img.caption && (
                     <figcaption>
                       <span class="gallery__fig">Fig. {i + 1}</span> {img.caption}
@@ -305,6 +322,16 @@ const category = categories[project.category];
   }
   .gallery__item {
     margin: 0;
+  }
+  /* Videos: silent, looping clips; tall phone videos are capped in height */
+  .gallery__video {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    max-height: 640px;
+    height: auto;
+    border: 1px solid var(--ink);
+    background: var(--ink);
   }
   .gallery__item--wide {
     grid-column: 1 / -1;

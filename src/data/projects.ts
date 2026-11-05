@@ -26,8 +26,9 @@ export type Project = {
   // Optional step-by-step flow drawn as a diagram on the project page
   pipeline?: { title: string; steps: { label: string; detail?: string }[] };
   acknowledgment?: string; // shown at the end of the description
-  // `wide: true` makes an image span the full gallery width
-  images?: { src: string; alt: string; caption?: string; wide?: boolean; width?: number; height?: number }[];
+  // `wide: true` spans the full gallery width. Add `video` (an .mp4 path) to show
+  // a silent looping clip, with `src` as its poster frame.
+  images?: { src: string; alt: string; caption?: string; wide?: boolean; width?: number; height?: number; video?: string }[];
   featured?: boolean;
 };
 
@@ -114,6 +115,79 @@ export const projects: Project[] = [
         alt: 'MATLAB plot of a 10-second ECG with detected heartbeats marked above a 1.4 V threshold',
         caption: 'MATLAB heartbeat detection on the Arduino\'s samples. Each marker is a detected R-peak above the 1.4 V threshold, giving a heart rate of 95.7 BPM.',
         wide: true,
+      },
+    ],
+  },
+  {
+    slug: 'asme-competition-turret',
+    title: 'Foam Ball Launching Turret: ASME Small Projects',
+    short: 'ASME Turret',
+    tags: ['Robotics', 'CAD', '3D Printing'],
+    category: 'college',
+    dates: 'Spring 2026',
+    summary:
+      'A team-built turret for an ASME competition: dual flywheels launch foam golf balls at cup-stack targets, a spiral hopper feeds ammunition, and a motor-driven geared turntable aims the whole launcher.',
+    description: [
+      'As part of the Small Projects subteam of Purdue\'s chapter of the American Society of Mechanical Engineers (ASME), my team designed and built a turret to launch foam golf balls at targets. The competition has three rounds. The accuracy round sets 10 cup-stack targets between 5 and 20 feet away and 3 to 8 feet high, with 20 balls to hit them. The time-attack round gives 3 minutes and unlimited balls, and the turret has to pivot between targets because hitting the same one twice in a row scores nothing. The range round is three attempts to launch a single ball as far as possible. The turret had to stay under 3 feet tall, keep launch speed under 45 m/s, and be operable with one hand.',
+      'We chose a dual-flywheel launcher for stable, repeatable shots. Two spinning wheels grip each ball and fire it through a 1.75-inch PVC barrel. Balls drop from a funnel hopper into the firing chamber, and a spiral hopper above it stores ammunition for the timed round while feeding balls one at a time so they don\'t jam.',
+      'To aim, the whole launcher sits on a lazy susan bearing. A motor turns it through a 3D-printed gear, giving the turret 180 degrees of rotation, and the design adds about 30 degrees of tilt for adjusting launch angle. Holding power to the motor locks the turret in place between shots. After presenting our preliminary design review, we built and tested the rotating base: the 3D-printed tower spins on its geared turntable, driven by the motor and controlled from a handheld radio controller.',
+    ],
+    facts: [
+      { label: 'Organization', value: 'ASME at Purdue, Small Projects subteam' },
+      { label: 'Team', value: 'Team project' },
+      { label: 'Constraints', value: 'Under 3 ft tall, launch speed under 45 m/s, one-handed operation' },
+      { label: 'Key parts', value: 'Dual flywheels, 1.75 in PVC barrel, spiral hopper, lazy susan bearing, 3D-printed gear and funnel' },
+    ],
+    pipeline: {
+      title: 'How the turret works',
+      steps: [
+        { label: 'Spiral hopper', detail: 'Stores ammo, prevents jams' },
+        { label: 'Funnel', detail: 'Drops balls into the chamber' },
+        { label: 'Dual flywheels', detail: 'Grip and launch each ball' },
+        { label: 'PVC barrel', detail: '1.75 in, guides the shot' },
+        { label: 'Turntable', detail: 'Lazy susan bearing base' },
+        { label: 'Geared motor', detail: '3D-printed drive gear' },
+        { label: 'Aim', detail: '180° rotation, ~30° tilt' },
+        { label: 'Lock', detail: 'Motor holds position' },
+      ],
+    },
+    images: [
+      {
+        src: '/projects/asme-turret/turret-rotation-poster.webp',
+        video: '/projects/asme-turret/turret-rotation.mp4',
+        width: 480,
+        height: 848,
+        alt: 'Video of the 3D-printed turret rotating on its geared turntable base, controlled with a handheld radio controller',
+        caption: 'Rotation test of the built turret base. The 3D-printed tower spins on its geared turntable, controlled from a handheld radio controller.',
+      },
+      {
+        src: '/projects/asme-turret/spiral-hopper-sketch.webp',
+        width: 654,
+        height: 902,
+        alt: 'Sketch of a spiral ramp wrapped around a central column, with balls rolling down to an outlet at the bottom',
+        caption: 'Spiral hopper concept. Balls roll down a ramp wrapped around a central column and leave one at a time, storing ammunition for the timed round without jamming.',
+      },
+      {
+        src: '/projects/asme-turret/feed-mechanism-sketch.webp',
+        width: 1800,
+        height: 963,
+        alt: 'Sketch of a funnel dropping a ball against a backboard onto a track lined with pairs of spinning wheels',
+        caption: 'Early launcher concept. A funnel drops each ball against a backboard, then pairs of spinning wheels accelerate it down a track. The final design narrowed this to a single pair of flywheels.',
+        wide: true,
+      },
+      {
+        src: '/projects/asme-turret/turntable-base-sketch.webp',
+        width: 1400,
+        height: 632,
+        alt: 'Sketch of a square base plate with a circular turntable and a mounting platform held by two brackets',
+        caption: 'Base and aiming concept: a turntable bearing set into the base plate, with brackets holding the launcher platform so it can tilt.',
+      },
+      {
+        src: '/projects/asme-turret/funnel-barrel-cad.webp',
+        width: 1254,
+        height: 930,
+        alt: 'CAD render of a funnel feeding into a cylindrical barrel',
+        caption: 'CAD model of the 3D-printed funnel feeding into the barrel.',
       },
     ],
   },
