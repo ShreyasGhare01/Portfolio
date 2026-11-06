@@ -2,7 +2,7 @@
 // Projects. Each one gets its own page at /projects/<slug>/.
 //
 // To add a project: copy a block, give it a unique `slug`,
-// and pick a `category`. Set `featured: true` to show it on
+// and pick a `category`. Add its slug to `homeProjects` (below) to show it on
 // the home page. Put images in /public/projects/ and list
 // them in `images` (optional).
 //
@@ -40,7 +40,6 @@ export type Project = {
     model?: string;
     ratio?: string;
   }[];
-  featured?: boolean;
 };
 
 // `webLabel` is how the category reads inside its bubble in the project web
@@ -68,6 +67,16 @@ export const categories: Record<Category, { name: string; blurb: string; webLabe
   },
 };
 
+// Projects shown on the home page, in this exact order (use each project's slug).
+export const homeProjects: string[] = [
+  'arduino-matlab-ecg',
+  'asme-competition-turret',
+  'surgical-instrument-grabber',
+  'cavopulmonary-assist-device',
+  'pip-joint-implant',
+  'aldose-reductase-brain-inflammation',
+];
+
 // Order of the tabs on the Projects page and the bubbles in the project web.
 export const categoryOrder: Category[] = ['college', 'lab', 'personal', 'research'];
 
@@ -80,7 +89,6 @@ export const projects: Project[] = [
     tags: ['Electronics', 'Biomedical', 'Programming'],
     category: 'college',
     dates: 'Spring 2026',
-    featured: true,
     summary:
       'A three-lead ECG built from scratch: amplifiers and filters that turn millivolt heart signals into a clean waveform, plus an Arduino and MATLAB that detect heartbeats and classify heart rate.',
     description: [
@@ -233,7 +241,6 @@ export const projects: Project[] = [
     tags: ['CAD', 'Biomedical', 'Design'],
     category: 'college',
     dates: 'Fall 2025',
-    featured: true,
     summary:
       'A team-designed, 3D-printable ball-and-socket implant for the finger\'s PIP joint, sized from hand anatomy, compression tested in PLA and TPU, and checked with finite element analysis up to 50 N.',
     description: [
@@ -310,7 +317,6 @@ export const projects: Project[] = [
     tags: ['CAD', '3D Printing', 'Design'],
     category: 'college',
     dates: 'Fall 2024 – Spring 2025',
-    featured: true,
     summary:
       'A working wind tunnel designed and built for the Indianapolis Speed Museum to support STEM education outreach.',
     description: [
@@ -400,22 +406,22 @@ export const projects: Project[] = [
   },
   // ── Undergraduate research ────────────────────────────────
   {
-    slug: 'heart-lab-surgical-instrument-robot',
-    title: 'Robotic Surgical Instrument Identification and Handling',
-    short: 'Surgical Robot',
+    slug: 'surgical-instrument-grabber',
+    title: 'Surgical Instrument Grabber: Robotic Arm Pick-Up System',
+    short: 'Instrument Grabber',
     tags: ['Robotics', 'Biomedical', 'Programming'],
     category: 'lab',
     dates: 'Summer 2026',
     summary:
-      'Summer research in the HeaRT Lab at the University of Louisville: a robotic module that recognizes surgical instruments with machine learning, then picks one up and unlatches its casing.',
+      'Summer research in the HeaRT Lab at the University of Louisville on a robotic arm that picks up surgical instruments: machine learning identifies each instrument, then a custom lead screw mechanism and vacuum tool grab it and unlatch its casing.',
     description: [
       'Over the summer of 2026, I worked as an undergraduate researcher in Dr. Yash Chitalia\'s HeaRT Laboratory at the University of Louisville, which develops robotic systems for medicine.',
-      'I developed a robotic module that identifies surgical instruments using a machine learning model. Once an instrument is identified, a lead screw motor mechanism I designed picks up the selected instrument and unlatches its device casing. I also engineered a custom vacuum pickup tool so the robot could handle instruments precisely and securely.',
+      'I worked on a robotic arm that picks up a variety of surgical instruments. I developed the module that identifies each instrument using a machine learning model. Once an instrument is identified, a lead screw motor mechanism I designed picks it up and unlatches its device casing. I also engineered a custom vacuum pickup tool so the arm could grab instruments of different shapes precisely and securely.',
     ],
     facts: [
       { label: 'Lab', value: 'HeaRT Laboratory, Dr. Yash Chitalia' },
       { label: 'Institution', value: 'University of Louisville, Shumaker Research Building' },
-      { label: 'Focus', value: 'Machine learning identification, lead screw mechanism, vacuum pickup tool' },
+      { label: 'Focus', value: 'Robotic arm instrument pick-up: machine learning identification, lead screw mechanism, vacuum pickup tool' },
     ],
     links: [{ label: 'Visit the HeaRT Lab', href: 'https://www.heart-lab.io/' }],
   },
@@ -475,7 +481,6 @@ export const projects: Project[] = [
     tags: ['Cell Biology', 'Neuroscience', 'Biomedical'],
     category: 'research',
     dates: '2022 – 2024',
-    featured: true,
     summary:
       'Gut-brain axis research at the University of Louisville: tested whether blocking the enzyme aldose reductase with epalrestat protects brain immune cells from inflammation caused by the bacterial toxin LPS. It did, across cell survival, cytokines, and oxidative stress.',
     description: [
@@ -581,7 +586,6 @@ export const projects: Project[] = [
     tags: ['Energy', 'Design'],
     category: 'research',
     dates: '2020 – 2021',
-    featured: true,
     summary:
       'Four solar panel designs built and tested for efficiency. Won 1st in Engineering at the Kentucky Academy of Science against undergraduates, and was published.',
     description: [
@@ -603,7 +607,6 @@ export const projects: Project[] = [
     tags: ['Robotics', 'Programming'],
     category: 'research',
     dates: '2019 – 2020',
-    featured: true,
     summary:
       'A LEGO EV3 robot that collects balls, used to compare a fixed-path strategy against a nearest-ball strategy. Placed in the Broadcom MASTERS national top 300.',
     description: [

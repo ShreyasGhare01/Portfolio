@@ -5,9 +5,13 @@ import ProjectCard from '../components/ProjectCard.astro';
 import { site, about, education, skills, languages } from '../data/site';
 import { research, leadership, service, interests } from '../data/experience';
 import { researchAwards, honors } from '../data/awards';
-import { projects } from '../data/projects';
+import { projects, homeProjects } from '../data/projects';
 
-const featuredProjects = projects.filter((p) => p.featured);
+const featuredProjects = homeProjects.map((slug) => {
+  const p = projects.find((x) => x.slug === slug);
+  if (!p) throw new Error(`homeProjects lists "${slug}", but no project has that slug`);
+  return p;
+});
 const featuredAwards = researchAwards.filter((a) => a.featured);
 const otherAwards = researchAwards.filter((a) => !a.featured);
 ---

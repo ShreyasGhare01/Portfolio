@@ -15,7 +15,7 @@ All the words on the site live in four files. You rarely need to touch anything 
 | `src/data/awards.ts` | Awards and honors. `featured: true` puts one in the highlight boxes. |
 
 **Add a project:** copy an existing block in `projects.ts`, give it a new `slug`, edit the text.
-Add `featured: true` to show it on the home page. For photos, drop them in `public/projects/` and list them under `images`.
+To show it on the home page, add its `slug` to the `homeProjects` list near the top of `projects.ts`; the home page follows that order. For photos, drop them in `public/projects/` and list them under `images`.
 
 **Swap the résumé:** replace `public/Shreyas_Ghare_Resume.pdf` (keep the same file name).
 
