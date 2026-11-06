@@ -427,16 +427,41 @@ export const projects: Project[] = [
     category: 'lab',
     dates: 'Summer 2026',
     summary:
-      'Summer research in the Biomedical Devices Lab at the University of Louisville: designing and testing impellers for a blood pump that supports patients living with a single-ventricle heart.',
+      'Summer research in the Biomedical Devices Lab at the University of Louisville: designing impellers for a blood pump that supports single-ventricle patients, and running and troubleshooting in-vitro hemolysis tests.',
     description: [
       'Over the summer of 2026, I worked as an undergraduate researcher in Dr. Guruprasad Giridharan\'s Biomedical Devices Laboratory at the University of Louisville.',
       'Patients born with a single functioning ventricle are treated with the Fontan procedure, which routes blood from the body directly to the lungs without a pumping chamber. Over time this circulation can fail. The lab is developing a novel, non-obstructive cavopulmonary assist device (CPAD) that adds pumping power to that pathway, aiming to reverse the "Fontan paradox."',
       'I designed and tested multiple novel impeller configurations to optimize the device\'s performance, and ran hemolysis comparisons against clinically approved blood pumps to evaluate how gently each design treats red blood cells, a key measure of biocompatibility and safety.',
+      'Hemolysis testing measures how much a blood pump damages red blood cells as it runs. We built a mock circulatory loop, primed it with saline, then filled it with blood warmed to 37 °C and ran the pump at a constant speed for four and a half hours, drawing samples every 45 minutes. For each sample I tracked hematocrit, hemoglobin, activated clotting time, and plasma-free hemoglobin, monitored pressures across the device, and calculated the normalized and modified indices of hemolysis (NIH and MIH), the standard metrics for comparing a device with clinically approved pumps. I then presented the results to the lab.',
+      'Part of the analysis was finding what could skew the numbers. I traced two sources of error. Vibration from the motor and shaft rippled the water bath that kept the device at body temperature, and those oscillations pushed blood into the saline-filled pressure sensors. Separately, oil from the ball bearing on the motor shaft was seeping into the blood circuit, which showed up as a thin film on a centrifuged sample. Identifying both gave the lab clear fixes for the test setup before the next run.',
     ],
     facts: [
       { label: 'Lab', value: 'Biomedical Devices Laboratory, Dr. Guruprasad Giridharan' },
       { label: 'Institution', value: 'University of Louisville, Shumaker Research Building' },
-      { label: 'Focus', value: 'Impeller design and testing, hemolysis comparison' },
+      { label: 'Focus', value: 'Impeller design and testing, in-vitro hemolysis testing' },
+      { label: 'Measurements', value: 'Hematocrit, hemoglobin, activated clotting time, plasma-free hemoglobin, pressures, NIH and MIH' },
+    ],
+    pipeline: {
+      title: 'Hemolysis test protocol',
+      steps: [
+        { label: 'Prime the loop', detail: 'Saline' },
+        { label: 'Fill with blood', detail: 'Pre-warmed to 37 °C' },
+        { label: 'Run the pump', detail: 'Constant speed, 4.5 hours' },
+        { label: 'Sample', detail: 'Every 45 minutes' },
+        { label: 'Blood labs', detail: 'Hematocrit, hemoglobin, ACT' },
+        { label: 'Plasma-free Hb', detail: 'Red cell damage released' },
+        { label: 'Hemolysis indices', detail: 'NIH and MIH' },
+        { label: 'Error analysis', detail: 'Leaks, sensors, setup' },
+      ],
+    },
+    images: [
+      {
+        src: '/projects/cpad/mock-loop.webp',
+        width: 1044,
+        height: 1400,
+        alt: 'A mock circulatory loop on a pegboard: a reservoir, silicone tubing, a flow sensor, and the pump connected in a closed circuit',
+        caption: 'The mock circulatory loop used for hemolysis testing. Blood circulates from the reservoir through tubing and inline sensors to the pump (bottom right) and back.',
+      },
     ],
   },
 
