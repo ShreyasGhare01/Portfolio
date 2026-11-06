@@ -58,7 +58,11 @@ const category = categories[project.category];
             project.links && (
               <div class="btn-row">
                 {project.links.map((l) => (
-                  <a class="btn" href={l.href} target="_blank" rel="noopener noreferrer">
+                  <a
+                    class="btn"
+                    href={l.href}
+                    {...(/^https?:/.test(l.href) ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                  >
                     {l.label} <Icon name="arrow" />
                   </a>
                 ))}
