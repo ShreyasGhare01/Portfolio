@@ -457,10 +457,11 @@ export const projects: Project[] = [
     images: [
       {
         src: '/projects/cpad/mock-loop.webp',
-        width: 1044,
-        height: 1400,
+        width: 1400,
+        height: 1044,
         alt: 'A mock circulatory loop on a pegboard: a reservoir, silicone tubing, a flow sensor, and the pump connected in a closed circuit',
-        caption: 'The mock circulatory loop used for hemolysis testing. Blood circulates from the reservoir through tubing and inline sensors to the pump (bottom right) and back.',
+        caption: 'The mock circulatory loop used for hemolysis testing. Blood circulates from the reservoir through tubing and inline sensors to the pump (bottom left) and back.',
+        wide: true,
       },
     ],
   },
