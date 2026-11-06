@@ -460,7 +460,7 @@ export const projects: Project[] = [
         width: 1400,
         height: 1044,
         alt: 'A mock circulatory loop on a pegboard: a reservoir, silicone tubing, a flow sensor, and the pump connected in a closed circuit',
-        caption: 'The mock circulatory loop used for hemolysis testing. Blood circulates from the reservoir through tubing and inline sensors to the pump (bottom left) and back.',
+        caption: 'The mock circulatory loop used for hemolysis testing. Blood circulates from the reservoir through tubing and inline sensors to the pump (top right) and back.',
         wide: true,
       },
     ],
