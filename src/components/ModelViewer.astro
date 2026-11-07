@@ -1,0 +1,292 @@
+---
+// ─────────────────────────────────────────────────────────────
+// Interactive 3D model (GLB). Shows the poster image first, then
+// loads three.js and the model only when scrolled near, so pages
+// stay fast and Netlify bandwidth stays low.
+// Drag to rotate, scroll or pinch to zoom, right-drag to pan.
+// ─────────────────────────────────────────────────────────────
+interface Props {
+  src: string; // .glb path in /public
+  poster: string; // still image shown until the model loads
+  alt: string;
+  ratio?: string; // CSS aspect-ratio of the viewer, e.g. "16 / 10"
+}
+const { src, poster, alt, ratio = '1 / 1' } = Astro.props;
+---
+
+<div class="model-wrap">
+  <div class="model" data-src={src} style={`aspect-ratio: ${ratio}`} role="img" aria-label={alt}>
+    <img class="model__poster" src={poster} alt="" loading="lazy" decoding="async" />
+    <span class="model__status" aria-live="polite">Loading 3D model…</span>
+    <span class="model__badge">3D</span>
+  </div>
+  <div class="model__bar">
+    <span class="model__hint">
+      <span class="model__hint-mouse">Drag to rotate · Scroll to zoom</span>
+      <span class="model__hint-touch">Drag to rotate · Pinch to zoom</span>
+    </span>
+    <button class="model__reset" type="button" disabled>Reset view</button>
+  </div>
+</div>
+
+<style>
+  .model {
+    position: relative;
+    width: 100%;
+    max-height: 640px;
+    border: 1px solid var(--ink);
+    background: #fbfbf9;
+    overflow: hidden;
+    touch-action: none;
+  }
+  .model :global(canvas) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: grab;
+    outline: none;
+  }
+  .model :global(canvas:active) {
+    cursor: grabbing;
+  }
+  .model__poster {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: opacity 0.4s ease;
+  }
+  .model.is-ready .model__poster {
+    opacity: 0;
+  }
+  /* Labels sit above the canvas but never block dragging */
+  .model__status,
+  .model__badge {
+    position: absolute;
+    z-index: 1;
+    pointer-events: none;
+    font-size: 11.5px;
+    background: var(--paper);
+    border: 1px solid var(--ink);
+  }
+  .model__status {
+    left: 12px;
+    bottom: 12px;
+    padding: 3px 9px;
+  }
+  .model__badge {
+    top: 10px;
+    left: 10px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    background: var(--mint);
+    padding: 2px 8px;
+  }
+  .model.is-ready .model__status,
+  .model.is-error .model__status,
+  .model.is-error .model__badge {
+    display: none;
+  }
+
+  /* Control bar below the viewer */
+  .model__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 0 0;
+    font-size: 11.5px;
+  }
+  .model__hint {
+    color: var(--muted);
+  }
+  .model__hint-touch {
+    display: none;
+  }
+  @media (hover: none) {
+    .model__hint-mouse {
+      display: none;
+    }
+    .model__hint-touch {
+      display: inline;
+    }
+  }
+  .model__reset {
+    font: inherit;
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: var(--paper);
+    color: var(--ink);
+    border: 1px solid var(--ink);
+    border-radius: 999px;
+    padding: 5px 14px;
+    cursor: pointer;
+    flex: none;
+    transition: background 0.15s ease;
+  }
+  .model__reset:hover:not(:disabled) {
+    background: var(--mint);
+  }
+  .model__reset:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+  .model-wrap:has(.model.is-error) .model__bar {
+    display: none;
+  }
+  /* Tall models read better in a square frame on phones */
+  @media (max-width: 760px) {
+    .model {
+      aspect-ratio: 1 / 1 !important;
+    }
+  }
+</style>
+
+<script>
+  type ThreeMods = [
+    typeof import('three'),
+    typeof import('three/addons/loaders/GLTFLoader.js'),
+    typeof import('three/addons/controls/OrbitControls.js'),
+    typeof import('three/addons/libs/meshopt_decoder.module.js'),
+    typeof import('three/addons/utils/BufferGeometryUtils.js'),
+  ];
+  let mods: Promise<ThreeMods> | null = null;
+  const loadThree = () =>
+    (mods ??= Promise.all([
+      import('three'),
+      import('three/addons/loaders/GLTFLoader.js'),
+      import('three/addons/controls/OrbitControls.js'),
+      import('three/addons/libs/meshopt_decoder.module.js'),
+      import('three/addons/utils/BufferGeometryUtils.js'),
+    ]));
+
+  function webglAvailable() {
+    try {
+      const c = document.createElement('canvas');
+      return !!(c.getContext('webgl2') || c.getContext('webgl'));
+    } catch {
+      return false;
+    }
+  }
+
+  async function init(el: HTMLElement) {
+    if (!webglAvailable()) {
+      el.classList.add('is-error');
+      return;
+    }
+    try {
+      const [THREE, { GLTFLoader }, { OrbitControls }, { MeshoptDecoder }, { toCreasedNormals }] = await loadThree();
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      const canvas = renderer.domElement;
+      canvas.setAttribute('tabindex', '0');
+      el.appendChild(canvas);
+
+      const scene = new THREE.Scene();
+      scene.add(new THREE.HemisphereLight(0xffffff, 0x8f8f8a, 1.5));
+      const key = new THREE.DirectionalLight(0xffffff, 2.4);
+      key.position.set(1.2, 2, 1.6);
+      scene.add(key);
+      const fill = new THREE.DirectionalLight(0xffffff, 0.7);
+      fill.position.set(-1.5, 0.8, -1.2);
+      scene.add(fill);
+
+      const loader = new GLTFLoader();
+      loader.setMeshoptDecoder(MeshoptDecoder);
+      const gltf = await loader.loadAsync(el.dataset.src!);
+      const material = new THREE.MeshStandardMaterial({ color: 0xb9b9b3, roughness: 0.55, metalness: 0.12 });
+      gltf.scene.traverse((obj) => {
+        const mesh = obj as import('three').Mesh;
+        if (!mesh.isMesh) return;
+        // Smooth curved surfaces but keep CAD edges crisp.
+        mesh.geometry = toCreasedNormals(mesh.geometry, Math.PI / 6);
+        mesh.material = material;
+      });
+      scene.add(gltf.scene);
+
+      // Frame the model.
+      const box = new THREE.Box3().setFromObject(gltf.scene);
+      const size = box.getSize(new THREE.Vector3());
+      const center = box.getCenter(new THREE.Vector3());
+      const maxDim = Math.max(size.x, size.y, size.z);
+
+      const grid = new THREE.GridHelper(maxDim * 3, 24, 0xd2d2cc, 0xe6e6e1);
+      grid.position.y = box.min.y;
+      scene.add(grid);
+
+      const camera = new THREE.PerspectiveCamera(32, 1, maxDim / 100, maxDim * 50);
+      const fitDist = (maxDim / (2 * Math.tan((camera.fov * Math.PI) / 360))) * 1.35;
+      const dir = new THREE.Vector3(1, 0.55, 1.25).normalize();
+      camera.position.copy(center).addScaledVector(dir, fitDist);
+
+      const controls = new OrbitControls(camera, canvas);
+      controls.target.copy(center);
+      controls.enableDamping = true;
+      controls.autoRotate = true;
+      controls.autoRotateSpeed = 1.1;
+      controls.minDistance = maxDim * 0.3;
+      controls.maxDistance = maxDim * 6;
+      controls.update();
+      controls.saveState();
+      controls.addEventListener('start', () => (controls.autoRotate = false));
+
+      const resetBtn = el.parentElement?.querySelector<HTMLButtonElement>('.model__reset');
+      if (resetBtn) {
+        resetBtn.disabled = false;
+        resetBtn.addEventListener('click', () => {
+          controls.reset();
+          controls.autoRotate = true;
+        });
+      }
+
+      const resize = () => {
+        const w = el.clientWidth;
+        const h = el.clientHeight;
+        renderer.setSize(w, h, false);
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+      };
+      new ResizeObserver(resize).observe(el);
+      resize();
+
+      // Only animate while on screen.
+      let visible = true;
+      new IntersectionObserver(([e]) => {
+        visible = e.isIntersecting;
+        if (visible) loop();
+      }).observe(el);
+      let raf = 0;
+      function loop() {
+        cancelAnimationFrame(raf);
+        if (!visible) return;
+        controls.update();
+        renderer.render(scene, camera);
+        raf = requestAnimationFrame(loop);
+      }
+      loop();
+      el.classList.add('is-ready');
+    } catch (err) {
+      console.warn('3D model failed to load', err);
+      el.classList.add('is-error');
+    }
+  }
+
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const e of entries) {
+        if (!e.isIntersecting) continue;
+        io.unobserve(e.target);
+        init(e.target as HTMLElement);
+      }
+    },
+    { rootMargin: '300px' },
+  );
+  document.querySelectorAll<HTMLElement>('.model[data-src]').forEach((el) => io.observe(el));
+</script>

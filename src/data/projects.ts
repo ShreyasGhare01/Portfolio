@@ -2,7 +2,7 @@
 // Projects. Each one gets its own page at /projects/<slug>/.
 //
 // To add a project: copy a block, give it a unique `slug`,
-// and pick a `category`. Set `featured: true` to show it on
+// and pick a `category`. Add its slug to `homeProjects` (below) to show it on
 // the home page. Put images in /public/projects/ and list
 // them in `images` (optional).
 //
@@ -10,7 +10,7 @@
 // projects that share a tag get connected.
 // ─────────────────────────────────────────────────────────────
 
-export type Category = 'college' | 'research' | 'personal';
+export type Category = 'college' | 'lab' | 'personal' | 'research';
 
 export type Project = {
   slug: string;
@@ -26,25 +26,59 @@ export type Project = {
   // Optional step-by-step flow drawn as a diagram on the project page
   pipeline?: { title: string; steps: { label: string; detail?: string }[] };
   acknowledgment?: string; // shown at the end of the description
-  // `wide: true` makes an image span the full gallery width
-  images?: { src: string; alt: string; caption?: string; wide?: boolean; width?: number; height?: number }[];
-  featured?: boolean;
+  // `wide: true` spans the full gallery width. Add `video` (an .mp4 path) to show
+  // a silent looping clip, or `model` (a .glb path) for an interactive 3D viewer;
+  // either way `src` is the poster image shown first. `ratio` sets a viewer's shape.
+  images?: {
+    src: string;
+    alt: string;
+    caption?: string;
+    wide?: boolean;
+    width?: number;
+    height?: number;
+    video?: string;
+    model?: string;
+    ratio?: string;
+  }[];
 };
 
-export const categories: Record<Category, { name: string; blurb: string }> = {
+// `webLabel` is how the category reads inside its bubble in the project web
+// (keep each line short so it fits).
+export const categories: Record<Category, { name: string; blurb: string; webLabel: string[] }> = {
   college: {
     name: 'College',
-    blurb: 'Projects completed at Purdue University as a Biomedical Engineering student.',
+    blurb: 'Projects completed at Purdue University as a Biomedical Engineering student, in courses and engineering clubs.',
+    webLabel: ['COLLEGE'],
+  },
+  lab: {
+    name: 'Undergraduate Research',
+    blurb: 'Research in university laboratories as an undergraduate, including summer research at the University of Louisville.',
+    webLabel: ['UNDERGRAD', 'RESEARCH'],
+  },
+  personal: {
+    name: 'Personal',
+    blurb: 'Projects built on my own time, outside of coursework and lab work.',
+    webLabel: ['PERSONAL'],
   },
   research: {
     name: 'Earlier Research',
     blurb: 'Independent research from middle and high school, including state and national award-winning work.',
-  },
-  personal: {
-    name: 'Personal',
-    blurb: 'Projects built outside of coursework and lab work.',
+    webLabel: ['EARLIER', 'RESEARCH'],
   },
 };
+
+// Projects shown on the home page, in this exact order (use each project's slug).
+export const homeProjects: string[] = [
+  'arduino-matlab-ecg',
+  'asme-competition-turret',
+  'surgical-instrument-grabber',
+  'cavopulmonary-assist-device',
+  'pip-joint-implant',
+  'aldose-reductase-brain-inflammation',
+];
+
+// Order of the tabs on the Projects page and the bubbles in the project web.
+export const categoryOrder: Category[] = ['college', 'lab', 'personal', 'research'];
 
 export const projects: Project[] = [
   // ── College ───────────────────────────────────────────────
@@ -55,7 +89,6 @@ export const projects: Project[] = [
     tags: ['Electronics', 'Biomedical', 'Programming'],
     category: 'college',
     dates: 'Spring 2026',
-    featured: true,
     summary:
       'A three-lead ECG built from scratch: amplifiers and filters that turn millivolt heart signals into a clean waveform, plus an Arduino and MATLAB that detect heartbeats and classify heart rate.',
     description: [
@@ -118,12 +151,192 @@ export const projects: Project[] = [
     ],
   },
   {
+    slug: 'asme-competition-turret',
+    title: 'Foam Ball Launching Turret: ASME Small Projects',
+    short: 'ASME Turret',
+    tags: ['Robotics', 'Electronics', 'CAD', '3D Printing'],
+    category: 'college',
+    dates: 'Spring 2026',
+    summary:
+      'A team-built turret for an ASME competition: dual flywheels launch foam golf balls at cup-stack targets, a spiral hopper feeds ammunition, and a motor-driven geared turntable aims the whole launcher.',
+    description: [
+      'As part of the Small Projects subteam of Purdue\'s chapter of the American Society of Mechanical Engineers (ASME), my team designed and built a turret to launch foam golf balls at targets. The competition has three rounds. The accuracy round sets 10 cup-stack targets between 5 and 20 feet away and 3 to 8 feet high, with 20 balls to hit them. The time-attack round gives 3 minutes and unlimited balls, and the turret has to pivot between targets because hitting the same one twice in a row scores nothing. The range round is three attempts to launch a single ball as far as possible. The turret had to stay under 3 feet tall, keep launch speed under 45 m/s, and be operable with one hand.',
+      'We chose a dual-flywheel launcher for stable, repeatable shots. Two spinning wheels grip each ball and fire it through a 1.75-inch PVC barrel. Balls drop from a funnel hopper into the firing chamber, and a spiral hopper above it stores ammunition for the timed round while feeding balls one at a time so they don\'t jam.',
+      'To aim, the whole launcher sits on a lazy susan bearing. A motor turns it through a 3D-printed gear, giving the turret 180 degrees of rotation, and the design adds about 30 degrees of tilt for adjusting launch angle. Holding power to the motor locks the turret in place between shots. We modeled the complete turret in Fusion 360. After presenting our preliminary design review, we built and tested the rotating base: the 3D-printed tower spins on its geared turntable, driven by the motor and controlled from a handheld radio controller.',
+      'My main role was the electronics: I wired the control circuit and programmed the Arduino that drives the turret\'s motor. I also helped design parts in CAD and 3D print the turret\'s components.',
+    ],
+    facts: [
+      { label: 'Organization', value: 'ASME at Purdue, Small Projects subteam' },
+      { label: 'Team', value: 'Team project' },
+      { label: 'My role', value: 'Electronics and Arduino programming; helped design the CAD and 3D print components' },
+      { label: 'Constraints', value: 'Under 3 ft tall, launch speed under 45 m/s, one-handed operation' },
+      { label: 'Tools', value: 'Fusion 360, Arduino, 3D printing' },
+      { label: 'Key parts', value: 'Dual flywheels, 1.75 in PVC barrel, spiral hopper, lazy susan bearing, 3D-printed gear and funnel' },
+    ],
+    pipeline: {
+      title: 'How the turret works',
+      steps: [
+        { label: 'Spiral hopper', detail: 'Stores ammo, prevents jams' },
+        { label: 'Funnel', detail: 'Drops balls into the chamber' },
+        { label: 'Dual flywheels', detail: 'Grip and launch each ball' },
+        { label: 'PVC barrel', detail: '1.75 in, guides the shot' },
+        { label: 'Turntable', detail: 'Lazy susan bearing base' },
+        { label: 'Geared motor', detail: '3D-printed drive gear' },
+        { label: 'Aim', detail: '180° rotation, ~30° tilt' },
+        { label: 'Lock', detail: 'Motor holds position' },
+      ],
+    },
+    images: [
+      {
+        src: '/projects/asme-turret/turret-assembly-poster.webp',
+        model: '/projects/asme-turret/turret-assembly.glb',
+        ratio: '16 / 10',
+        alt: 'Interactive 3D model of the full turret assembly in Fusion 360',
+        caption: 'Interactive model of the full turret assembly. Drag to rotate and scroll to zoom. From the bottom up: the turntable base, the motor tower, the barrel holder with its flywheels, and the curved feed tube that brings balls down to the barrel. Simplified for the web from the Fusion 360 model.',
+        wide: true,
+      },
+      {
+        src: '/projects/asme-turret/turret-rotation-poster.webp',
+        video: '/projects/asme-turret/turret-rotation.mp4',
+        width: 480,
+        height: 848,
+        alt: 'Video of the 3D-printed turret rotating on its geared turntable base, controlled with a handheld radio controller',
+        caption: 'Rotation test of the built turret base. The 3D-printed tower spins on its geared turntable, driven by the Arduino-controlled motor and steered from a handheld radio controller.',
+      },
+      {
+        src: '/projects/asme-turret/turret-holder-poster.webp',
+        model: '/projects/asme-turret/turret-holder.glb',
+        ratio: '1 / 1',
+        alt: 'Interactive 3D model of the turret holder head',
+        caption: 'The turret holder head, which cradles the launcher barrel at the top of the turret. Drag to rotate.',
+      },
+      {
+        src: '/projects/asme-turret/feed-mechanism-sketch.webp',
+        width: 1800,
+        height: 963,
+        alt: 'Sketch of a funnel dropping a ball against a backboard onto a track lined with pairs of spinning wheels',
+        caption: 'Early launcher concept. A funnel drops each ball against a backboard, then pairs of spinning wheels accelerate it down a track. The final design narrowed this to a single pair of flywheels.',
+        wide: true,
+      },
+      {
+        src: '/projects/asme-turret/spiral-hopper-sketch.webp',
+        width: 654,
+        height: 902,
+        alt: 'Sketch of a spiral ramp wrapped around a central column, with balls rolling down to an outlet at the bottom',
+        caption: 'Spiral hopper concept. Balls roll down a ramp wrapped around a central column and leave one at a time, storing ammunition for the timed round without jamming.',
+      },
+      {
+        src: '/projects/asme-turret/turntable-base-sketch.webp',
+        width: 1400,
+        height: 632,
+        alt: 'Sketch of a square base plate with a circular turntable and a mounting platform held by two brackets',
+        caption: 'Base and aiming concept: a turntable bearing set into the base plate, with brackets holding the launcher platform so it can tilt.',
+      },
+    ],
+  },
+  {
+    slug: 'pip-joint-implant',
+    title: 'PIP Finger Joint Implant: CAD Proof of Concept',
+    short: 'PIP Joint Implant',
+    tags: ['CAD', 'Biomedical', 'Design'],
+    category: 'college',
+    dates: 'Fall 2025',
+    summary:
+      'A team-designed, 3D-printable ball-and-socket implant for the finger\'s PIP joint, sized from hand anatomy, compression tested in PLA and TPU, and checked with finite element analysis up to 50 N.',
+    description: [
+      'Osteoarthritis is the most common form of arthritis and frequently affects the proximal interphalangeal (PIP) joint in the middle of the finger. Once the cartilage wears away, bone grinds on bone, and severe cases need a joint replacement that costs around $22,000. Current implants, most often silicone, can loosen, crack, or wear out over time, which can mean another surgery. Working in a team for BME 21401, Purdue\'s Biomechanical Analysis Laboratory, we set out to design a proof-of-concept PIP implant that could be 3D printed and customized to a patient.',
+      'I drew the anatomical sketches that grounded the design, mapping the phalanges and joints of the hand, the joint capsule and articular cartilage, and an early ball-and-socket concept. I then modeled the implant in CAD as two parts. The upper piece attaches to the middle phalanx and ends in a 5.5 mm radius ball. It stands 13 mm tall, under the average 16.1 mm length of that bone, and is 13 mm wide to match the bone\'s base. The lower piece attaches to the proximal phalanx and holds the socket, at 17 mm tall against an average bone length of 20.7 mm. Each part has a 1 mm radius hole for a surgical screw to fix it to the bone.',
+      'We compared PLA, TPU, aluminum, titanium, and ABS, and chose PLA and TPU for their low cost and printability. We compression tested five printed cylinders of each on an Instron universal testing machine. PLA was far stiffer, with a Young\'s modulus of 1.31 ± 0.08 GPa against 20.4 ± 1.4 MPa for TPU, a difference confirmed by a two-sample t-test (p = 4.4 × 10⁻⁶) that I ran. Two TPU samples sheared rather than compressing evenly and were excluded as outliers. In finite element analysis of the implant geometry, typical finger loads fall between 2 and 35 N. At 50 N the design held a minimum safety factor of 1.41 with under 0.1 mm of displacement, and stress concentrated around the screw hole.',
+      'The results showed that printed PLA is strong enough for prototype-level loads but much less stiff than bone (1.3 GPa against 10 to 30 GPa), so it suits a proof of concept rather than a final implant, while the more flexible TPU is a better match for cartilage-like regions. A ball-and-socket joint also allows more motion than a real PIP joint, which works like a hinge. Next steps would be a hinge-based geometry, a reinforced screw hole with larger fillets, fatigue and multi-axial load testing, medical-grade materials, and patient-specific designs built from medical imaging.',
+    ],
+    facts: [
+      { label: 'Course', value: 'BME 21401, Biomechanical Analysis Laboratory, Purdue University' },
+      { label: 'Team', value: 'Four-person team' },
+      { label: 'My role', value: 'Anatomical sketches, CAD modeling and engineering drawings, statistical analysis, methods write-up' },
+      { label: 'Tools', value: 'CAD and FEA, Instron universal testing machine, Excel' },
+      { label: 'Results', value: 'Safety factor of 1.41 at 50 N; PLA modulus 1.31 GPa vs TPU 20.4 MPa (p < 0.001)' },
+    ],
+    pipeline: {
+      title: 'Design process',
+      steps: [
+        { label: 'Clinical need', detail: 'PIP osteoarthritis, implant failure' },
+        { label: 'Anatomical sketches', detail: 'Phalanx sizes, joint structure' },
+        { label: 'CAD model', detail: 'Two-part ball and socket' },
+        { label: 'Engineering drawings', detail: 'Dimensioned in mm' },
+        { label: 'Material selection', detail: 'PLA and TPU from five candidates' },
+        { label: 'Compression testing', detail: 'Five samples per material' },
+        { label: 'Statistics', detail: 'Two-sample t-test' },
+        { label: 'FEA', detail: 'Loads of 20, 30, and 50 N' },
+      ],
+    },
+    images: [
+      {
+        src: '/projects/pip-joint/anatomical-sketches.webp',
+        width: 756,
+        height: 599,
+        alt: 'Pencil sketches on graph paper of hand bones with labeled joints and phalanx lengths, a finger joint capsule, and a ball-and-socket concept',
+        caption: 'My anatomical sketches: the bones and joints of the hand with the average phalanx lengths used to size the implant, the joint capsule and articular cartilage, and the first ball-and-socket concept.',
+      },
+      {
+        src: '/projects/pip-joint/cad-assembly.webp',
+        width: 756,
+        height: 538,
+        alt: 'CAD renders of the ball component, the socket component, and the assembled implant',
+        caption: 'The CAD model: the ball component (left) attaches to the middle phalanx, the socket component (center) to the proximal phalanx, and together they form the assembled joint (right).',
+      },
+      {
+        src: '/projects/pip-joint/engineering-drawing.webp',
+        width: 1144,
+        height: 811,
+        alt: 'Dimensioned engineering drawing of the ball component with front, side, top, and isometric views',
+        caption: 'Engineering drawing of the ball component, with all dimensions in millimeters.',
+        wide: true,
+      },
+      {
+        src: '/projects/pip-joint/compression-curves.webp',
+        width: 1800,
+        height: 528,
+        alt: 'Two stress-strain charts from compression testing five PLA samples and five TPU samples',
+        caption: 'Compression testing of five printed cylinders per material. PLA (left) behaved consistently. In the TPU tests (right), the two curves that rise early came from samples that sheared rather than compressing evenly, and they were excluded as outliers.',
+        wide: true,
+      },
+      {
+        src: '/projects/pip-joint/fea-50n.webp',
+        width: 756,
+        height: 429,
+        alt: 'Three finite element analysis renders of the ball component under a downward load, colored by safety factor, stress, and displacement',
+        caption: 'Finite element analysis of the ball component under 50 N, above the 2 to 35 N a finger joint typically sees. Left to right: safety factor, von Mises stress, and displacement. The minimum safety factor stayed at 1.41, with stress concentrated around the screw hole.',
+        wide: true,
+      },
+    ],
+  },
+  {
+    slug: 'epics-speedway-wind-tunnel',
+    title: 'Purdue EPICS: SPEEDWAY Wind Tunnel',
+    short: 'Wind Tunnel',
+    tags: ['CAD', '3D Printing', 'Design'],
+    category: 'college',
+    dates: 'Fall 2024 – Spring 2025',
+    summary:
+      'A working wind tunnel designed and built for the Indianapolis Speed Museum to support STEM education outreach.',
+    description: [
+      "As part of Purdue's EPICS (Engineering Projects in Community Service) program, designed and assembled a fully functional wind tunnel for the Indianapolis Speed Museum to support STEM education outreach.",
+      'Used Fusion 360 for CAD modeling, 3D printing for component fabrication, and hands-on prototyping for assembly. The project emphasized teamwork, engineering communication, and iterative design while delivering a real-world educational exhibit.',
+    ],
+    facts: [
+      { label: 'Institution', value: 'Purdue University, EPICS Program' },
+      { label: 'Partner', value: 'Indianapolis Speed Museum' },
+      { label: 'Tools', value: 'Fusion 360, 3D printing, prototyping' },
+    ],
+  },
+
+  {
     slug: 'python-hand-histogram',
     title: 'Histogram Hand: Finger Motion and Piano Notes in Python',
     short: 'Histogram Hand',
     tags: ['Programming', 'Biomedical'],
     category: 'college',
-    dates: 'Spring 2025',
+    dates: 'Fall 2024',
     summary:
       'A Python program that models a human hand as a live histogram, one bar per finger, and plays a piano note when a finger presses past its natural reach. Built with Tkinter, Matplotlib, and an embedded tutorial video.',
     description: [
@@ -191,24 +404,72 @@ export const projects: Project[] = [
       },
     ],
   },
+  // ── Undergraduate research ────────────────────────────────
   {
-    slug: 'epics-speedway-wind-tunnel',
-    title: 'Purdue EPICS: SPEEDWAY Wind Tunnel',
-    short: 'Wind Tunnel',
-    tags: ['CAD', '3D Printing', 'Design'],
-    category: 'college',
-    dates: 'Fall 2024 – Spring 2025',
-    featured: true,
+    slug: 'surgical-instrument-grabber',
+    title: 'Surgical Instrument Grabber: Robotic Arm Pick-Up System',
+    short: 'Instrument Grabber',
+    tags: ['Robotics', 'Biomedical', 'Programming'],
+    category: 'lab',
+    dates: 'Summer 2026',
     summary:
-      'A working wind tunnel designed and built for the Indianapolis Speed Museum to support STEM education outreach.',
+      'Summer research in the HeaRT Lab at the University of Louisville on a robotic arm that picks up surgical instruments: machine learning identifies each instrument, then a custom lead screw mechanism and vacuum tool grab it and unlatch its casing.',
     description: [
-      "As part of Purdue's EPICS (Engineering Projects in Community Service) program, designed and assembled a fully functional wind tunnel for the Indianapolis Speed Museum to support STEM education outreach.",
-      'Used Fusion 360 for CAD modeling, 3D printing for component fabrication, and hands-on prototyping for assembly. The project emphasized teamwork, engineering communication, and iterative design while delivering a real-world educational exhibit.',
+      'Over the summer of 2026, I worked as an undergraduate researcher in Dr. Yash Chitalia\'s HeaRT Laboratory at the University of Louisville, which develops robotic systems for medicine.',
+      'I worked on a robotic arm that picks up a variety of surgical instruments. I developed the module that identifies each instrument using a machine learning model. Once an instrument is identified, a lead screw motor mechanism I designed picks it up and unlatches its device casing. I also engineered a custom vacuum pickup tool so the arm could grab instruments of different shapes precisely and securely.',
     ],
     facts: [
-      { label: 'Institution', value: 'Purdue University, EPICS Program' },
-      { label: 'Partner', value: 'Indianapolis Speed Museum' },
-      { label: 'Tools', value: 'Fusion 360, 3D printing, prototyping' },
+      { label: 'Lab', value: 'HeaRT Laboratory, Dr. Yash Chitalia' },
+      { label: 'Institution', value: 'University of Louisville, Shumaker Research Building' },
+      { label: 'Focus', value: 'Robotic arm instrument pick-up: machine learning identification, lead screw mechanism, vacuum pickup tool' },
+    ],
+    links: [{ label: 'Visit the HeaRT Lab', href: 'https://www.heart-lab.io/' }],
+  },
+  {
+    slug: 'cavopulmonary-assist-device',
+    title: 'Cavopulmonary Assist Device for Fontan Failure',
+    short: 'Fontan Assist Device',
+    tags: ['Biomedical', 'Design'],
+    category: 'lab',
+    dates: 'Summer 2026',
+    summary:
+      'Summer research assisting the Biomedical Devices Lab at the University of Louisville on a blood pump for single-ventricle patients, including impeller testing and in-vitro hemolysis tests.',
+    description: [
+      'Summer 2026 research in Dr. Guruprasad Giridharan\'s Biomedical Devices Laboratory at the University of Louisville, shadowing and assisting the lab team on an ongoing device project.',
+      'Patients born with a single functioning ventricle are treated with the Fontan procedure, which routes blood from the body directly to the lungs without a pumping chamber. Over time this circulation can fail. The lab is developing a novel, non-obstructive cavopulmonary assist device (CPAD) that adds pumping power to that pathway, aiming to reverse the "Fontan paradox."',
+      'The team designed and tested multiple novel impeller configurations to optimize the device\'s performance, and ran hemolysis comparisons against clinically approved blood pumps to evaluate how gently each design treats red blood cells, a key measure of biocompatibility and safety.',
+      'Hemolysis testing measures how much a blood pump damages red blood cells as it runs. We built a mock circulatory loop, primed it with saline, then filled it with blood warmed to 37 °C and ran the pump at a constant speed for four and a half hours, drawing samples every 45 minutes. For each sample, we tracked hematocrit, hemoglobin, activated clotting time, and plasma-free hemoglobin, monitored pressures across the device, and calculated the normalized and modified indices of hemolysis (NIH and MIH), the standard metrics for comparing a device with clinically approved pumps. We then presented the results to the lab.',
+      'Part of the analysis was finding what could skew the numbers, and we traced two sources of error. Vibration from the motor and shaft rippled the water bath that kept the device at body temperature, and those oscillations pushed blood into the saline-filled pressure sensors. Separately, oil from the ball bearing on the motor shaft was seeping into the blood circuit, which showed up as a thin film on a centrifuged sample. Identifying both gave the team clear fixes for the test setup before the next run.',
+    ],
+    facts: [
+      { label: 'Lab', value: 'Biomedical Devices Laboratory, Dr. Guruprasad Giridharan' },
+      { label: 'My role', value: 'Undergraduate researcher shadowing and assisting the lab team' },
+      { label: 'Institution', value: 'University of Louisville, Shumaker Research Building' },
+      { label: 'Focus', value: 'Impeller design and testing, in-vitro hemolysis testing' },
+      { label: 'Measurements', value: 'Hematocrit, hemoglobin, activated clotting time, plasma-free hemoglobin, pressures, NIH and MIH' },
+    ],
+    pipeline: {
+      title: 'Hemolysis test protocol',
+      steps: [
+        { label: 'Prime the loop', detail: 'Saline' },
+        { label: 'Fill with blood', detail: 'Pre-warmed to 37 °C' },
+        { label: 'Run the pump', detail: 'Constant speed, 4.5 hours' },
+        { label: 'Sample', detail: 'Every 45 minutes' },
+        { label: 'Blood labs', detail: 'Hematocrit, hemoglobin, ACT' },
+        { label: 'Plasma-free Hb', detail: 'Red cell damage released' },
+        { label: 'Hemolysis indices', detail: 'NIH and MIH' },
+        { label: 'Error analysis', detail: 'Leaks, sensors, setup' },
+      ],
+    },
+    images: [
+      {
+        src: '/projects/cpad/mock-loop.webp',
+        width: 1400,
+        height: 1044,
+        alt: 'A mock circulatory loop on a pegboard: a reservoir, silicone tubing, a flow sensor, and the pump connected in a closed circuit',
+        caption: 'The mock circulatory loop used for hemolysis testing. Blood circulates from the reservoir through tubing and inline sensors to the pump (top right) and back.',
+        wide: true,
+      },
     ],
   },
 
@@ -220,7 +481,6 @@ export const projects: Project[] = [
     tags: ['Cell Biology', 'Neuroscience', 'Biomedical'],
     category: 'research',
     dates: '2022 – 2024',
-    featured: true,
     summary:
       'Gut-brain axis research at the University of Louisville: tested whether blocking the enzyme aldose reductase with epalrestat protects brain immune cells from inflammation caused by the bacterial toxin LPS. It did, across cell survival, cytokines, and oxidative stress.',
     description: [
@@ -302,45 +562,209 @@ export const projects: Project[] = [
     ],
   },
   {
-    slug: 'peltier-thermoelectric-effects',
-    title: 'Peltier Chips and the Reversibility of Thermoelectric Effects',
-    short: 'Peltier Chip',
-    tags: ['Energy', 'Electronics', 'Physics'],
+    slug: 'solar-panel-temperature-regulation',
+    title: 'Improving Solar Panel Efficiency Through Temperature Change',
+    short: 'Solar Temperature',
+    tags: ['Energy', 'Electronics', 'Programming'],
     category: 'research',
-    dates: '2021 – 2022',
-    featured: true,
+    dates: '2022 – 2023',
     summary:
-      'Tested whether a temperature difference across a Peltier chip can generate usable electrical energy through the Seebeck effect.',
+      'AP Research project: clamped a Peltier chip behind four solar panel models to heat or cool them from 21 to 29 °C. Cooler panels made more power on every model, and the sun-tracking panel with mirrors led throughout.',
     description: [
-      'Investigated renewable energy generation through the Seebeck effect: heating one side of a Peltier chip and cooling the other to see whether the temperature difference produces electrical energy.',
-      'The study explored the reversibility of thermoelectric effects and their potential for practical energy harvesting.',
+      'For AP Research in 11th grade, I went back to the solar panel models I built in 9th grade and asked a new question: how much does a panel\'s own temperature change its output? Solar cells lose efficiency as they heat up, and the sunniest places to build solar farms are often deserts, where panels run hot and cooling usually means spraying water that is scarce. I used the Peltier effect, the reverse of the Seebeck effect I studied in 10th grade, to heat or cool each panel from behind and find the temperature range with the greatest power output.',
+      'The study used four models. The static model, a flat panel like most utility-scale arrays, was the control. The tracking model is a dual-axis tracker on an azimuth mount: an Arduino Nano reads four light-dependent resistors (LDRs) arranged in quadrants, compares the top and bottom and the left and right averages, and steps two servo motors toward the brighter side within set limits. The reflector module, an acrylic frame holding four lightweight mirrors angled at 120°, rests on top of either model to bounce extra sunlight onto the cells, which gave the static reflector and tracking reflector models. A Peltier chip with a heat sink was clamped to the back of every panel.',
+      'Outdoor testing exposed a problem with the tracker: its four LDRs responded to the same light differently. Each was within its rated tolerance, but the mismatch would pull the tracking algorithm off target. I tested the sensors under an LED light 10 feet away, took 50 readings from each, and replaced sensors until all four averaged between 3.02 and 3.06.',
+      'For testing, the Peltier chip held each panel at 21, 23, 25, 27, or 29 °C. I measured voltage and current with a multimeter every two hours from 9 a.m. to 5 p.m. over multiple days, calculated power as voltage times current, and compared each model against the flat control with Student\'s t-tests.',
+      'Cooler panels produced more power on every model. The flat panel made 1.36 W at 25 °C, rose to 1.65 W at 21 °C (about 21% more from a 4 °C drop), and fell to 1.10 W at 29 °C. The tracking reflector model led at every temperature: at 25 °C it produced about 188% more power than the flat panel, and it peaked at 4.74 W at 21 °C. To put that in household terms, I calculated how long each model would take to charge a 2000 mAh rechargeable battery. The tracking reflector model needed about 4 hours at 25 °C and about 3 hours at 21 °C, while the static reflector model needed about 16 hours, enough time for the tracker to charge four batteries.',
+      'The biggest surprise was that the reflector made the static panel worse, not better. The mirrors cast shadows on the cells, and because the sun crosses the sky at an angle in the Northern Hemisphere, light rarely hits a fixed reflector head-on. On the tracker, which always turns to face the sun, the same module raised output. The panels were small proof-of-concept models, and the Peltier chip needs its own power, so next steps include testing whether the panel can run its own chip and deriving an equation for output versus temperature. The results suggest Peltier cooling could be a water-free alternative to the cooling systems used on desert solar farms.',
     ],
     facts: [
+      { label: 'Course', value: 'AP Research, 11th grade' },
+      { label: 'Field', value: 'Environmental engineering, renewable energy' },
+      { label: 'Hardware', value: 'Arduino Nano, LDRs, two servo motors, Peltier chip and heat sink, acrylic, mirrors' },
+      { label: 'Measurements', value: 'Voltage and current by multimeter; power; Student\'s t-tests' },
+      { label: 'Series', value: 'Third of three solar and thermoelectric projects (9th–11th grade)' },
+    ],
+    links: [
+      { label: 'Where it started: 9th-grade solar models', href: '/projects/solar-panel-efficiency/' },
+      { label: '10th-grade Peltier chip study', href: '/projects/peltier-thermoelectric-effects/' },
+    ],
+    pipeline: {
+      title: 'Research process',
+      steps: [
+        { label: 'Build models', detail: 'Static and tracking, plus reflector module' },
+        { label: 'Add Peltier module', detail: 'Chip and heat sink behind each panel' },
+        { label: 'Calibrate sensors', detail: 'Match the four LDRs' },
+        { label: 'Set temperature', detail: '21 to 29 °C in 2 °C steps' },
+        { label: 'Measure output', detail: 'Voltage and current, 9 a.m. to 5 p.m.' },
+        { label: 'Calculate power', detail: 'Watts = volts × amps' },
+        { label: 'Compare models', detail: 'Student\'s t-tests vs. flat control' },
+        { label: 'Apply', detail: 'Time to charge a 2000 mAh battery' },
+      ],
+    },
+    images: [
+      {
+        src: '/projects/solar-temperature/four-models.webp',
+        width: 1616,
+        height: 1136,
+        alt: 'Four solar panel models: a flat static panel, the static panel with a mirror reflector, the tracking panel with its light sensors, and the tracking panel with the reflector',
+        caption: 'The four models. The reflector module is an add-on that sits on top of either the static or the tracking panel.',
+        wide: true,
+      },
+      {
+        src: '/projects/solar-temperature/tracker-mechanism.webp',
+        width: 669,
+        height: 430,
+        alt: 'Underside of the tracking model showing two servo motors, an Arduino Nano on a small board, and an acrylic frame holding the panel',
+        caption: 'Underneath the tracking model: two servo motors give it vertical and horizontal movement, driven by the Arduino Nano at right.',
+      },
+      {
+        src: '/projects/solar-temperature/peltier-clamp.webp',
+        width: 1154,
+        height: 865,
+        alt: 'A Peltier chip clipped to a metal plate on a countertop, with red and black power leads',
+        caption: 'A Peltier chip clamped to a heat-spreading plate, the same mounting used on the back of each panel.',
+      },
+      {
+        src: '/projects/solar-temperature/tracking-flowchart.webp',
+        width: 1342,
+        height: 811,
+        alt: 'Flowchart of the tracking algorithm: read the LDRs, average top, bottom, left, and right, then step the vertical and horizontal servos within their limits',
+        caption: 'The tracking algorithm. The Arduino averages the LDR readings on each side; when the difference passes a threshold, it steps the matching servo toward the brighter side, within set limits.',
+        wide: true,
+      },
+      {
+        src: '/projects/solar-temperature/charge-time-25c.webp',
+        width: 1096,
+        height: 689,
+        alt: 'Bar chart of hours to charge a 2000 mAh battery at 25 °C: flat 11.04, flat with reflector 15.91, tracker 6.66, tracker with reflector 4.04',
+        caption: 'Hours to charge a 2000 mAh battery at 25 °C. The reflector slowed the static panel but sped up the tracker.',
+      },
+      {
+        src: '/projects/solar-temperature/charge-time-by-temp.webp',
+        width: 1129,
+        height: 688,
+        alt: 'Bar chart of hours to charge a 2000 mAh battery by temperature for the flat panel and the tracking reflector model, rising from 21 to 29 °C',
+        caption: 'Charge time by panel temperature. Both models charged faster when cooled and slower when heated.',
+      },
+    ],
+  },
+  {
+    slug: 'peltier-thermoelectric-effects',
+    title: 'Effectiveness of a Peltier Chip to Test Reversibility of Thermoelectric Effects',
+    short: 'Peltier Chip',
+    tags: ['Energy', 'Electronics', 'Physics', '3D Printing'],
+    category: 'research',
+    dates: '2021 – 2022',
+    summary:
+      'Ran a Peltier chip both ways: voltage in to make a temperature difference, and a temperature difference in to make voltage. The chip gave back about 1/20 of the voltage, so I stacked ten chips in series to see how far the Seebeck effect scales.',
+    description: [
+      'Thermoelectric devices turn a temperature difference directly into electricity, or electricity into a temperature difference, with no moving parts. A Peltier chip does the second job (the Peltier effect) and is sold as a small cooler. The reverse, generating voltage from heat (the Seebeck effect), traditionally uses two different metals held at different temperatures. In 10th grade I asked whether one Peltier chip could do both, and whether it is equally effective each way: if a given voltage creates a certain temperature difference, does recreating that temperature difference give the same voltage back? My hypothesis was yes. I designed and ran the experiments at home on my own.',
+      'For the Peltier effect, I suspended a single chip in the air so both faces were open, powered it with a variable voltage adapter from 3 to 8 V in 0.5 V steps, and measured each side with a digital temperature sensor. The temperature difference climbed steadily with voltage: the hot side rose from an average of 80 °F to 163 °F, the cold side from 72 °F to 99 °F, and the gap between them grew from about 8 °F to 64 °F.',
+      'The Seebeck setup took two tries. My first prototype attached a bent aluminum plate to each face of the chip and dipped the plates into separate containers of hot and cold water. It produced voltage, which proved the idea, but the chip itself never touched the heat or cold, so too little temperature difference reached it. I redesigned the setup so the chip sat directly on a towel over a heated pan, with ice packs pressed onto the top face. I changed the temperature difference by raising the heat or adding ice, and read the voltage with a multimeter.',
+      'Output rose in a straight line with temperature difference, from about 0.20 V at 40 °F to 0.52 V at 71 °F, and Student\'s t-tests showed every step up in temperature difference raised the voltage significantly (p ≤ 0.05). So one chip can produce the Seebeck effect. But for the same temperature difference, the voltage it produced was about 20 times smaller than the voltage needed to create that difference. I also found a limit: with one side heated to 140 °F, the cold side would not drop below about 70 °F no matter how much ice I added, likely because the thin chip conducts heat from one face to the other.',
+      'Because the response was linear, I tested whether the Seebeck effect stacks. I 3D printed a holder for ten chips and soldered each chip\'s negative terminal to the next chip\'s positive terminal to wire them in series. Ten chips multiplied the output roughly tenfold, up to 5.16 V, and generated enough voltage to light an LED. Even so, they still fell short of the input voltage, and the data suggest about 20 chips would be needed to break even.',
+      'The hypothesis turned out to be false: the Peltier chip is much better at making a temperature difference from voltage than at making voltage from a temperature difference. Because the Seebeck output stacks, chips in series could still harvest useful power. In the paper I proposed a jacket that uses the Peltier effect to heat or cool its wearer and the Seebeck effect, driven by body heat, to charge a phone, along with uses in vehicles and superconductor cooling.',
+      'The project placed 3rd in Physics and Astronomy at my regional science fair and 3rd at the Junior Science and Humanities Symposium, where I presented in consecutive years and met working researchers and other student scientists. It was also the middle step of a three-year series: my 9th-grade solar models ended with the question of how temperature affects efficiency, and in 11th grade I used a Peltier chip to cool and heat those same solar panels for AP Research.',
+    ],
+    facts: [
+      { label: 'Grade', value: '10th grade, independent research' },
       { label: 'Field', value: 'Physics, renewable energy' },
+      { label: 'Equipment', value: 'Peltier chips, variable DC voltage adapter, multimeter, temperature sensor, heat source, ice packs, 3D-printed 10-chip holder' },
+      { label: 'Analysis', value: 'Means and standard deviations over repeated trials; Student\'s t-tests' },
       { label: 'Recognition', value: '3rd Place Physics & Astronomy (regional); 3rd Place, Junior Science & Humanities Symposium (two years)' },
+    ],
+    links: [
+      { label: '9th-grade solar models', href: '/projects/solar-panel-efficiency/' },
+      { label: 'Next: 11th-grade AP Research', href: '/projects/solar-panel-temperature-regulation/' },
+    ],
+    pipeline: {
+      title: 'Research process',
+      steps: [
+        { label: 'Study the chip', detail: 'How Peltier junctions work' },
+        { label: 'Peltier test', detail: '3 to 8 V in, temperature of each side out' },
+        { label: 'Seebeck prototype', detail: 'Aluminum plates in hot and cold water' },
+        { label: 'Redesign', detail: 'Chip in direct contact with heat and ice' },
+        { label: 'Seebeck test', detail: 'Temperature difference in, voltage out' },
+        { label: 'Stack 10 chips', detail: 'Series circuit in a 3D-printed holder' },
+        { label: 'Compare', detail: 'Input vs. output voltage, t-tests' },
+      ],
+    },
+    images: [
+      {
+        src: '/projects/peltier/circuit-diagrams.webp',
+        width: 1120,
+        height: 360,
+        alt: 'Two circuit diagrams: the Peltier circuit with a variable voltage source, switch, voltmeter and temperature sensor across a heated and cooled chip; the Seebeck circuit with a voltmeter across a chip between heat and cold sources',
+        caption: 'The two circuits. Left: voltage in, temperature difference measured. Right: temperature difference in, voltage measured.',
+        wide: true,
+      },
+      {
+        src: '/projects/peltier/peltier-effect.webp',
+        width: 1580,
+        height: 580,
+        alt: 'Line chart of cold-side, hot-side and difference temperatures for one Peltier chip from 3 to 8 volts, all rising steadily',
+        caption: 'Peltier effect: hot-side, cold-side and difference temperatures as input voltage rises from 3 to 8 V.',
+        wide: true,
+      },
+      {
+        src: '/projects/peltier/seebeck-effect.webp',
+        width: 1133,
+        height: 672,
+        alt: 'Scatter plot with trend line of voltage output rising linearly from about 0.2 to 0.5 volts as temperature difference rises from 40 to 71 °F, with significance asterisks',
+        caption: 'Seebeck effect with one chip: output rises linearly with temperature difference (* p ≤ 0.05, ** p ≤ 0.01).',
+      },
+      {
+        src: '/projects/peltier/comparison.webp',
+        width: 1129,
+        height: 734,
+        alt: 'Bar chart comparing Peltier input voltage, one-chip Seebeck output and ten-chip Seebeck output at temperature differences from 40 to 65 °F',
+        caption: 'Voltage in (Peltier) vs. voltage out (Seebeck) for the same temperature difference. Ten chips in series closed part of the gap.',
+      },
     ],
   },
   {
     slug: 'solar-panel-efficiency',
     title: 'Methods to Improve the Efficiency of Solar Panels',
     short: 'Solar Panels',
-    tags: ['Energy', 'Design'],
+    tags: ['Energy', 'Design', 'Electronics', 'Programming'],
     category: 'research',
     dates: '2020 – 2021',
-    featured: true,
     summary:
-      'Four solar panel designs built and tested for efficiency. Won 1st in Engineering at the Kentucky Academy of Science against undergraduates, and was published.',
+      'Built a sun-tracking solar panel and an add-on mirror module, then tested four combinations for power output. Won 1st in Engineering at the Kentucky Academy of Science against undergraduates, and was published.',
     description: [
-      'Designed and built four solar panel models, each hypothesized to improve photovoltaic efficiency, and tested them against one another.',
+      'In 9th grade I set out to raise the output of a small solar panel without changing the panel itself, by building attachments around it. A flat static panel served as the control. I then built a dual-axis tracking model: an Arduino Nano reads four light-dependent resistors and drives two servo motors so the panel turns to face the brightest light. I also designed a reflector module, an acrylic frame with four lightweight mirrors angled at 120°, that rests on top of either model to bounce extra sunlight onto the cells.',
+      'That gave four combinations to test: static, static with reflector, tracking, and tracking with reflector. I measured voltage and current with a multimeter at several points through the day and compared how long each model would take to charge a 2000 mAh rechargeable battery. The tracking model with the reflector led at every time point, averaging about 6.2 V and 600 mA, and could charge almost three batteries in 12 hours.',
       'After placing 2nd of roughly 300 at the 2021 Kentucky Junior Academy of Science, the project was invited to the Kentucky Academy of Science, where it took 1st Place in Engineering against undergraduate researchers from Kentucky universities.',
       'The Kentucky Academy of Science then published the research abstract in its scholarly journal, and the project was presented nationally at the American Junior Academy of Science and the American Association for the Advancement of Science.',
+      'This project started a three-year series. Its list of future directions ended with studying how temperature affects efficiency, which led to my 10th-grade work on Peltier chips and then to my 11th-grade AP Research project, where I used a Peltier chip to cool and heat these same models.',
     ],
     facts: [
       { label: 'Field', value: 'Engineering, renewable energy' },
       { label: 'Recognition', value: '1st Place Engineering, KAS 2021; 2nd Place, KJAS 2021; AJAS & AAAS presenter' },
       { label: 'Publication', value: 'Journal of the Kentucky Academy of Science' },
     ],
-    links: [{ label: 'Read the published abstract', href: 'https://doi.org/10.3101/1098-7096-82.1.45' }],
+    links: [
+      { label: 'Read the published abstract', href: 'https://doi.org/10.3101/1098-7096-82.1.45' },
+      { label: 'The follow-up: 11th-grade AP Research', href: '/projects/solar-panel-temperature-regulation/' },
+    ],
+    images: [
+      {
+        src: '/projects/solar-temperature/four-models.webp',
+        width: 1616,
+        height: 1136,
+        alt: 'Four solar panel models: a flat static panel, the static panel with a mirror reflector, the tracking panel with its light sensors, and the tracking panel with the reflector',
+        caption: 'The four configurations built for this project, photographed later during the AP Research follow-up.',
+        wide: true,
+      },
+      {
+        src: '/projects/solar-temperature/tracker-mechanism.webp',
+        width: 669,
+        height: 430,
+        alt: 'Underside of the tracking model showing two servo motors, an Arduino Nano on a small board, and an acrylic frame holding the panel',
+        caption: 'The tracking mechanism: two servo motors for vertical and horizontal movement, driven by an Arduino Nano.',
+      },
+    ],
   },
   {
     slug: 'pick-a-ball-robot',
@@ -349,7 +773,6 @@ export const projects: Project[] = [
     tags: ['Robotics', 'Programming'],
     category: 'research',
     dates: '2019 – 2020',
-    featured: true,
     summary:
       'A LEGO EV3 robot that collects balls, used to compare a fixed-path strategy against a nearest-ball strategy. Placed in the Broadcom MASTERS national top 300.',
     description: [
