@@ -1,7 +1,7 @@
 # Shreyas Ghare: Portfolio
 
 Personal portfolio site, built with [Astro](https://astro.build) and deployed on Netlify.
-Every push to `main` publishes automatically.
+Every push to `main` publishes the live site (this uses Netlify credits).
 
 ## Editing content
 
@@ -20,6 +20,18 @@ To show it on the home page, add its `slug` to the `homeProjects` list near the 
 **Swap the résumé:** replace `public/Shreyas_Ghare_Resume.pdf` (keep the same file name).
 
 **Change colors or fonts:** edit the variables at the top of `src/styles/global.css`.
+
+## Publishing changes (saves Netlify credits)
+
+1. Make edits on the `draft` branch, never directly on `main`.
+2. Open a pull request from `draft` into `main` (or reuse an open one). Netlify builds a free
+   **Deploy Preview** for it and posts the link on the pull request. Every new push to `draft`
+   updates that same preview.
+3. When the preview looks right, merge the pull request with **Create a merge commit**.
+   That is the only step that publishes the live site and spends credits.
+4. Don't delete the `draft` branch after merging; keep using it for the next batch.
+
+A category tab on the Projects page appears automatically once it has at least one project.
 
 ## Quick edits without installing anything
 

@@ -4,8 +4,11 @@ import ProjectCard from '../../components/ProjectCard.astro';
 import ProjectWeb from '../../components/ProjectWeb.astro';
 import { projects, categories, categoryOrder } from '../../data/projects';
 
-// Every category gets a tab, even before it has projects.
-const groups = categoryOrder.map((key) => ({ key, ...categories[key], items: projects.filter((p) => p.category === key) }));
+// A category gets a tab only once it has at least one project, so an empty
+// one (Personal, for now) stays hidden and appears on its own when filled.
+const groups = categoryOrder
+  .map((key) => ({ key, ...categories[key], items: projects.filter((p) => p.category === key) }))
+  .filter((g) => g.items.length > 0);
 ---
 
 <Base title="Projects" description="Engineering, research, and personal projects by Shreyas Ghare.">
